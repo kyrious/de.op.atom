@@ -1,0 +1,346 @@
+openapi: 3.0.0
+info:
+   title: Atom Foods
+   license:
+      name: MIT
+   version: 0.0.1
+servers:
+-  url: http://localhost:8080/atom/v1
+paths:
+   /foods/ingredients/{id}:
+      get:
+         operationId: getIngredientbyId
+         tags:
+         - ingredient
+         parameters:
+         -  name: id
+            in: path
+            required: true
+            schema:
+               type: integer
+               format: int64
+         responses:
+            '200':
+               description: Expected response to a valid request
+               content:
+                  application/json:
+                     schema:
+                        $ref: '#/components/schemas/Ingredient'
+            default:
+               description: unexpected error
+               content:
+                  application/json:
+                     schema:
+                        $ref: core.yaml#/components/schemas/Error
+      delete:
+         operationId: deleteIngredientWithId
+         tags:
+         - ingredient
+         parameters:
+         -  name: id
+            in: path
+            required: true
+            schema:
+               type: integer
+               format: int64
+         responses:
+            '204':
+               description: Expected response to a valid request
+            default:
+               description: unexpected error
+               content:
+                  application/json:
+                     schema:
+                        $ref: core.yaml#/components/schemas/Error
+      put:
+         operationId: putIngredientToId
+         tags:
+         - ingredient
+         parameters:
+         -  name: id
+            in: path
+            required: true
+            schema:
+               type: integer
+               format: int64
+         requestBody:
+            content:
+               application/json:
+                  schema:
+                     $ref: '#/components/schemas/Ingredient'
+         responses:
+            '200':
+               description: Expected response to a valid request
+               content:
+                  application/json:
+                     schema:
+                        $ref: '#/components/schemas/Ingredient'
+            default:
+               description: unexpected error
+               content:
+                  application/json:
+                     schema:
+                        $ref: core.yaml#/components/schemas/Error
+   /foods/ingredients:
+      get:
+         operationId: getIngredients
+         tags:
+         - ingredient
+         responses:
+            '200':
+               description: Expected response to a valid request
+               content:
+                  application/json:
+                     schema:
+                        type: array
+                        items:
+                           $ref: '#/components/schemas/Ingredient'
+            default:
+               description: unexpected error
+               content:
+                  application/json:
+                     schema:
+                        $ref: core.yaml#/components/schemas/Error
+      post:
+         operationId: postNewIngredients
+         tags:
+         - ingredient
+         requestBody:
+            content:
+               application/json:
+                  schema:
+                     $ref: '#/components/schemas/Ingredient'
+         responses:
+            '200':
+               description: Expected response to a valid request
+               content:
+                  application/json:
+                     schema:
+                        $ref: '#/components/schemas/Ingredient'
+            default:
+               description: unexpected error
+               content:
+                  application/json:
+                     schema:
+                        $ref: core.yaml#/components/schemas/Error
+   
+   /foods/recipes/{id}:
+      get:
+         operationId: getRecipebyId
+         tags:
+         - recipe
+         parameters:
+         -  name: id
+            in: path
+            required: true
+            schema:
+               type: integer
+               format: int64
+         responses:
+            '200':
+               description: Expected response to a valid request
+               content:
+                  application/json:
+                     schema:
+                        $ref: '#/components/schemas/Recipe'
+            default:
+               description: unexpected error
+               content:
+                  application/json:
+                     schema:
+                        $ref: core.yaml#/components/schemas/Error
+      delete:
+         operationId: deleteRecipeWithId
+         tags:
+         - recipe
+         parameters:
+         -  name: id
+            in: path
+            required: true
+            schema:
+               type: integer
+               format: int64
+         responses:
+            '204':
+               description: Expected response to a valid request
+            default:
+               description: unexpected error
+               content:
+                  application/json:
+                     schema:
+                        $ref: core.yaml#/components/schemas/Error
+      put:
+         operationId: putRecipeToId
+         tags:
+         - recipe
+         parameters:
+         -  name: id
+            in: path
+            required: true
+            schema:
+               type: integer
+               format: int64
+         requestBody:
+            content:
+               application/json:
+                  schema:
+                     $ref: '#/components/schemas/Recipe'
+         responses:
+            '200':
+               description: Expected response to a valid request
+               content:
+                  application/json:
+                     schema:
+                        $ref: '#/components/schemas/Recipe'
+            default:
+               description: unexpected error
+               content:
+                  application/json:
+                     schema:
+                        $ref: core.yaml#/components/schemas/Error
+   /foods/recipes:
+      get:
+         operationId: getRecipes
+         tags:
+         - recipe
+         responses:
+            '200':
+               description: Expected response to a valid request
+               content:
+                  application/json:
+                     schema:
+                        type: array
+                        items:
+                           $ref: '#/components/schemas/Recipe'
+            default:
+               description: unexpected error
+               content:
+                  application/json:
+                     schema:
+                        $ref: core.yaml#/components/schemas/Error
+      post:
+         operationId: postNewRecipe
+         tags:
+         - recipe
+         requestBody:
+            content:
+               application/json:
+                  schema:
+                     $ref: '#/components/schemas/Recipe'
+         responses:
+            '200':
+               description: Expected response to a valid request
+               content:
+                  application/json:
+                     schema:
+                        $ref: '#/components/schemas/Recipe'
+            default:
+               description: unexpected error
+               content:
+                  application/json:
+                     schema:
+                        $ref: core.yaml#/components/schemas/Error
+components:
+   schemas:
+      Unit:
+         type: string
+         enum:
+         - LITRE
+         - MILLILITRE
+         - GRAM
+         - KILOGRAM
+      Ingredient:
+         required:
+         - category
+         - name
+         type: object
+         properties:
+            id:
+               type: integer
+               format: int64
+            version:
+               type: integer
+               format: int64
+            name:
+               type: string
+            category:
+               type: string
+               enum:
+               - VEGETABLE
+               - CEREAL
+               - FRUIT
+               - DAIRY
+               - MEAT
+               - CONFECTION
+            default-unit:
+               $ref: '#/components/schemas/Unit'
+            makro-nutrients:
+               $ref: '#/components/schemas/MakroNutrients'
+      Makro-Nutrients:
+         required:
+         - sugar
+         - carbohydrates
+         - saturated-fat
+         - unsaturated-fat
+         - fiber
+         - protein
+         - calories
+         type: object
+         properties:
+            sugar:
+               type: integer
+               description: In Gram
+            carbohydrates:
+               type: integer
+               description: Carbohydrates other then sugar in Gram
+            saturated-fat:
+               type: integer
+               description: In Gram
+            unsaturated-fat:
+               type: integer
+               description: In Gram
+            fiber:
+               type: integer
+               description: In Gram
+            protein:
+               type: integer
+               description: In Gram
+            calories:
+               type: integer
+               description: In kcal
+      Recipe:
+         type: object
+         properties:
+            id:
+               type: integer
+               format: int64
+            version:
+               type: integer
+               format: int64
+            parts:
+               type: array
+               items:
+                  $ref: '#/components/schemas/RecipePart'
+            name:
+               type: string
+            description:
+               type: string
+      RecipePart:
+         required:
+         - amount
+         - ingredient
+         - unit
+         type: object
+         properties:
+            id:
+               type: integer
+               format: int64
+            version:
+               type: integer
+               format: int64
+            ingredient:
+               $ref: '#/components/schemas/Ingredient'
+            amount:
+               type: integer
+            unit:
+               $ref: '#/components/schemas/Unit'

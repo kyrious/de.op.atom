@@ -1,0 +1,33 @@
+openapi: 3.0.0
+info:
+   title: Atom
+   license:
+      name: MIT
+   version: 0.0.1
+servers:
+-  url: http://localhost:8080/atom/v1
+paths:
+   /version:
+      get:
+         operationId: getVersion
+         tags:
+         - core
+         responses:
+          '200':
+            description: Expected response to a valid request
+            content:
+              text/plain:
+                schema:
+                  type: string
+components:
+   schemas:
+      Error:
+         required:
+         - code
+         - message
+         type: object
+         properties:
+            code:
+               type: integer
+            message:
+               type: string

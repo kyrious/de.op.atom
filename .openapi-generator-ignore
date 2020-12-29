@@ -1,0 +1,16 @@
+src/main/webapp/WEB-INF/web.xml
+src/main/webapp/WEB-INF/jboss-web.xml
+src/main/java/
+src/test/java/
+src/main/AndroidManifest.xml
+build.sbt
+git_push.sh
+gradle.properties
+gradlew
+gradlew.bat
+gradle/
+docs/
+.gitignore
+.travis.yml
+pom.xml
+src/main/gen/de/op/atom/gen/inv/JacksonConfig.java
