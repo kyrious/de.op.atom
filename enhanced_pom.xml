@@ -7,14 +7,16 @@
   <version>0.1.0-SNAPSHOT</version>
   <properties>
     <maven.compiler.release>14</maven.compiler.release>
-    <surefire-plugin.version>3.0.0-M5</surefire-plugin.version>
     <quarkus.platform.version>1.10.5.Final</quarkus.platform.version>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <frontend-maven-plugin.version>1.11.0</frontend-maven-plugin.version>
     <quarkus.platform.artifact-id>quarkus-universe-bom</quarkus.platform.artifact-id>
-    <compiler-plugin.version>3.8.1</compiler-plugin.version>
-    <maven.compiler.parameters>true</maven.compiler.parameters>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <compiler-plugin.version>3.8.1</compiler-plugin.version>
+    <surefire-plugin.version>3.0.0-M5</surefire-plugin.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.parameters>true</maven.compiler.parameters>
     <quarkus-plugin.version>1.10.5.Final</quarkus-plugin.version>
+    <maven-resources-plugin.version>3.2.0</maven-resources-plugin.version>
     <quarkus.platform.group-id>io.quarkus</quarkus.platform.group-id>
   </properties>
   <dependencyManagement>
@@ -71,11 +73,6 @@
     <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-junit5</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>io.rest-assured</groupId>
-      <artifactId>rest-assured</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -137,6 +134,36 @@
               <sources>
                 <source>${project.basedir}/src/main/gen</source>
               </sources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>com.github.eirslett</groupId>
+        <artifactId>frontend-maven-plugin</artifactId>
+        <version>${frontend-maven-plugin.version}</version>
+        <configuration>
+          <workingDirectory>src/main/angular</workingDirectory>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>${maven-resources-plugin.version}</version>
+        <executions>
+          <execution>
+            <id>copy-angular-resources</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${basedir}/target/classes/META-INF/resources/</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>src/main/angular/dist</directory>
+                  <filtering>false</filtering>
+                </resource>
+              </resources>
             </configuration>
           </execution>
         </executions>
@@ -262,6 +289,61 @@
       <properties>
         <quarkus.package.type>native</quarkus.package.type>
       </properties>
+    </profile>
+    <profile>
+      <id>install-node</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>com.github.eirslett</groupId>
+            <artifactId>frontend-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>install node and npm</id>
+                <phase>generate-resources</phase>
+                <goals>
+                  <goal>install-node-and-npm</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>npm install</id>
+                <phase>generate-resources</phase>
+                <goals>
+                  <goal>npm</goal>
+                </goals>
+                <configuration>
+                  <arguments>install</arguments>
+                </configuration>
+              </execution>
+            </executions>
+            <configuration>
+              <nodeVersion>v15.5.0</nodeVersion>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>build-ui</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>com.github.eirslett</groupId>
+            <artifactId>frontend-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <phase>generate-resources</phase>
+                <goals>
+                  <goal>npm</goal>
+                </goals>
+                <configuration>
+                  <arguments>run build -- --base-href=/my-app/</arguments>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
     </profile>
   </profiles>
 </project>
