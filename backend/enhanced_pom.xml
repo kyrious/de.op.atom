@@ -8,6 +8,7 @@
   <properties>
     <maven.compiler.release>14</maven.compiler.release>
     <quarkus.platform.version>1.10.5.Final</quarkus.platform.version>
+    <frontend.path.base>${basedir}/../frontend</frontend.path.base>
     <frontend-maven-plugin.version>1.11.0</frontend-maven-plugin.version>
     <quarkus.platform.artifact-id>quarkus-universe-bom</quarkus.platform.artifact-id>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -143,7 +144,7 @@
         <artifactId>frontend-maven-plugin</artifactId>
         <version>${frontend-maven-plugin.version}</version>
         <configuration>
-          <workingDirectory>src/main/angular</workingDirectory>
+          <workingDirectory>${frontend.path.base}</workingDirectory>
         </configuration>
       </plugin>
       <plugin>
@@ -160,7 +161,7 @@
               <outputDirectory>${basedir}/target/classes/META-INF/resources/</outputDirectory>
               <resources>
                 <resource>
-                  <directory>src/main/angular/dist</directory>
+                  <directory>${frontend.path.base}/dist</directory>
                   <filtering>false</filtering>
                 </resource>
               </resources>

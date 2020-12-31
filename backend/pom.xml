@@ -20,6 +20,9 @@
 		<surefire-plugin.version>3.0.0-M5</surefire-plugin.version>
 		<maven-resources-plugin.version>3.2.0</maven-resources-plugin.version>
 		<frontend-maven-plugin.version>1.11.0</frontend-maven-plugin.version>
+		
+		<frontend.base.path>${basedir}/../frontend</frontend.base.path>
+		<frontend.base.href>/atom/</frontend.base.href>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -122,8 +125,7 @@
 				<version>${surefire-plugin.version}</version>
 				<configuration>
 					<systemPropertyVariables>
-						<java.util.logging.manager>org.jboss.logmanager.LogManager
-						</java.util.logging.manager>
+						<java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
 						<maven.home>${maven.home}</maven.home>
 					</systemPropertyVariables>
 				</configuration>
@@ -152,7 +154,7 @@
 				<artifactId>frontend-maven-plugin</artifactId>
 				<version>${frontend-maven-plugin.version}</version>
 				<configuration>
-					<workingDirectory>src/main/angular</workingDirectory>
+					<workingDirectory>${frontend.base.path}</workingDirectory>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -169,7 +171,7 @@
 							<outputDirectory>${basedir}/target/classes/META-INF/resources/</outputDirectory>
 							<resources>
 								<resource>
-									<directory>src/main/angular/dist</directory>
+									<directory>${frontend.base.path}/dist</directory>
 									<filtering>false</filtering>
 								</resource>
 							</resources>
@@ -294,7 +296,7 @@
 								</goals>
 								<phase>generate-resources</phase>
 								<configuration>
-									<arguments>run build -- --base-href=/my-app/</arguments>
+									<arguments>run build -- --base-href=${frontend.base.href}</arguments>
 								</configuration>
 							</execution>
 						</executions>

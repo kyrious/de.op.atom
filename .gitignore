@@ -34,14 +34,17 @@ pom.xml.tag
 pom.xml.releaseBackup
 pom.xml.versionsBackup
 release.properties
-/.mvn/
+.mvn/
 
-/.openapi-generator/
-/build.gradle
-/mvnw
-/mvnw.cmd
-/node_modules/
-/settings.gradle
+.openapi-generator/
+build.gradle
+mvnw
+mvnw.cmd
+node_modules/
+dist/
+settings.gradle
 
-/src/main/gen
-/src/main/docker
+/backend/src/main/gen
+/backend/src/main/docker
+/frontend/gen
+/frontend/node
