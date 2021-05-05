@@ -7,7 +7,7 @@ import java.util.function.BiFunction;
 
 public abstract class AbstractAtomTest {
 
-    public final <E, G> void assertCollectionEquals(Collection<E> expectedCollection,
+    public final <E, G> void assertCollectionEquality(Collection<E> expectedCollection,
                                                      Collection<G> givenCollection,
                                                      BiFunction<E, G, Boolean> b) {
         for (E expected : expectedCollection) {

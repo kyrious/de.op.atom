@@ -103,7 +103,7 @@ public class RecipeApiProviderTest extends AbstractAtomTest {
 
         assertEquals(recipeDto.getName(), readRecipe.getName());
         assertEquals(recipeDto.getDescription(), readRecipe.getDescription());
-        assertCollectionEquals(recipeDto.getParts(), readRecipe.getParts(), this::recipePartsEquals);
+        assertCollectionEquality(recipeDto.getParts(), readRecipe.getParts(), this::recipePartsEquals);
     }
 
     @Test
@@ -157,7 +157,7 @@ public class RecipeApiProviderTest extends AbstractAtomTest {
 
         assertEquals(recipeDto.getName(), readRecipe.getName());
         assertEquals(recipeDto.getDescription(), readRecipe.getDescription());
-        assertCollectionEquals(recipeDto.getParts(), readRecipe.getParts(), this::recipePartsEquals);
+        assertCollectionEquality(recipeDto.getParts(), readRecipe.getParts(), this::recipePartsEquals);
     }
 
     @Test
@@ -175,7 +175,7 @@ public class RecipeApiProviderTest extends AbstractAtomTest {
 
         assertEquals(recipeDto.getName(), readRecipe.getName());
         assertEquals(recipeDto.getDescription(), readRecipe.getDescription());
-        assertCollectionEquals(recipeDto.getParts(), readRecipe.getParts(), this::recipePartsEquals);
+        assertCollectionEquality(recipeDto.getParts(), readRecipe.getParts(), this::recipePartsEquals);
     }
 
     @Test
@@ -208,7 +208,7 @@ public class RecipeApiProviderTest extends AbstractAtomTest {
 
         assertEquals(newName, updatedRecipe.getName());
         assertEquals(readRecipe.getDescription(), updatedRecipe.getDescription());
-        assertCollectionEquals(readRecipe.getParts(), updatedRecipe.getParts(), this::recipePartsEquals);
+        assertCollectionEquality(readRecipe.getParts(), updatedRecipe.getParts(), this::recipePartsEquals);
     }
 
     @Test
@@ -246,7 +246,7 @@ public class RecipeApiProviderTest extends AbstractAtomTest {
 
         assertEquals(readRecipe.getName(), updatedRecipe.getName());
         assertEquals(readRecipe.getDescription(), updatedRecipe.getDescription());
-        assertCollectionEquals(readRecipe.getParts(), updatedRecipe.getParts(), this::recipePartsEquals);
+        assertCollectionEquality(readRecipe.getParts(), updatedRecipe.getParts(), this::recipePartsEquals);
     }
 
     @Test

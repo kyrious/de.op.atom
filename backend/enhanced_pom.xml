@@ -8,12 +8,13 @@
   <properties>
     <maven.compiler.release>14</maven.compiler.release>
     <quarkus.platform.version>1.10.5.Final</quarkus.platform.version>
-    <frontend.path.base>${basedir}/../frontend</frontend.path.base>
+    <frontend.base.path>${basedir}/../frontend</frontend.base.path>
     <frontend-maven-plugin.version>1.11.0</frontend-maven-plugin.version>
     <quarkus.platform.artifact-id>quarkus-universe-bom</quarkus.platform.artifact-id>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <compiler-plugin.version>3.8.1</compiler-plugin.version>
     <surefire-plugin.version>3.0.0-M5</surefire-plugin.version>
+    <frontend.base.href>/atom/</frontend.base.href>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.parameters>true</maven.compiler.parameters>
     <quarkus-plugin.version>1.10.5.Final</quarkus-plugin.version>
@@ -144,7 +145,7 @@
         <artifactId>frontend-maven-plugin</artifactId>
         <version>${frontend-maven-plugin.version}</version>
         <configuration>
-          <workingDirectory>${frontend.path.base}</workingDirectory>
+          <workingDirectory>${frontend.base.path}</workingDirectory>
         </configuration>
       </plugin>
       <plugin>
@@ -161,7 +162,7 @@
               <outputDirectory>${basedir}/target/classes/META-INF/resources/</outputDirectory>
               <resources>
                 <resource>
-                  <directory>${frontend.path.base}/dist</directory>
+                  <directory>${frontend.base.path}/dist</directory>
                   <filtering>false</filtering>
                 </resource>
               </resources>
@@ -338,7 +339,7 @@
                   <goal>npm</goal>
                 </goals>
                 <configuration>
-                  <arguments>run build -- --base-href=/my-app/</arguments>
+                  <arguments>run build -- --base-href=${frontend.base.href}</arguments>
                 </configuration>
               </execution>
             </executions>

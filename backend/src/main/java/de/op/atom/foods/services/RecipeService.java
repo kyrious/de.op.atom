@@ -2,6 +2,8 @@ package de.op.atom.foods.services;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;
@@ -34,6 +36,16 @@ public class RecipeService {
         if (alyreadyExistent != null) {
             recipe.getParts()
                   .forEach(this::updateOrCreate);
+            Set<Long> parts = recipe.getParts()
+                                    .stream()
+                                    .map(this::updateOrCreate)
+                                    .map(p -> p.getId())
+                                    .collect(Collectors.toSet());
+            alyreadyExistent.getParts()
+                            .stream()
+                            .filter(p -> !parts.contains(p.getId()))
+                            .forEach(this::deleteRecipepart);
+
             em.merge(recipe);
         } else {
             em.persist(recipe);
@@ -41,22 +53,31 @@ public class RecipeService {
         return recipe.getId();
     }
 
-    private void updateOrCreate(RecipePart part) {
+    private RecipePart updateOrCreate(RecipePart part) {
         Long postedId = part.getId();
         RecipePart alyreadyExistent = null;
         if (postedId != null) {
             alyreadyExistent = em.find(RecipePart.class, postedId);
         }
         if (alyreadyExistent != null) {
-            em.merge(part);
+            return em.merge(part);
         } else {
             em.persist(part);
+            return part;
         }
+    }
+
+    private void deleteRecipepart(RecipePart p) {
+        RecipePart r = em.find(RecipePart.class, p.getId());
+        if (r == null) {
+            throw new NoSuchElementException();
+        }
+        em.remove(r);
     }
 
     public void deleteRecipeWithId(Long id) {
         Recipe r = em.find(Recipe.class, id);
-        if(r == null) {
+        if (r == null) {
             throw new NoSuchElementException();
         }
         em.remove(r);

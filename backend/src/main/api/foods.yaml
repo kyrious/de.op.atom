@@ -272,16 +272,16 @@ components:
                - DAIRY
                - MEAT
                - CONFECTION
-            default-unit:
+            defaultUnit:
                $ref: '#/components/schemas/Unit'
-            makro-nutrients:
+            makroNutrients:
                $ref: '#/components/schemas/MakroNutrients'
-      Makro-Nutrients:
+      MakroNutrients:
          required:
          - sugar
          - carbohydrates
-         - saturated-fat
-         - unsaturated-fat
+         - saturatedFat
+         - unsaturatedFat
          - fiber
          - protein
          - calories
@@ -293,10 +293,10 @@ components:
             carbohydrates:
                type: integer
                description: Carbohydrates other then sugar in Gram
-            saturated-fat:
+            saturatedFat:
                type: integer
                description: In Gram
-            unsaturated-fat:
+            unsaturatedFat:
                type: integer
                description: In Gram
             fiber:
