@@ -1,0 +1,16 @@
+form {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+	width:500px;
+	height:1500px;
+  align-content: flex-start;
+	margin: 10px;
+}
+.subform{
+	margin: 10px;
+}
+mat-form-field {
+  flex: 0 0 100px;
+  width: 400px;
+}

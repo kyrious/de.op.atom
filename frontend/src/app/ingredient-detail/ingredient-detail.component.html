@@ -1,0 +1,60 @@
+<div>
+	<form [formGroup]="ingredientForm" (ngSubmit)="onSubmit(ingredientForm.value)">
+		<h2>Ingredient</h2>
+		<mat-form-field appearance="fill">
+			<mat-label>Name</mat-label>
+			<input matInput type="text" formControlName="name">
+		</mat-form-field>
+		<mat-form-field appearance="fill">
+			<mat-label>Category</mat-label>
+			<mat-select matInput matInput formControlName="category">
+				<mat-option [value]="null">No option selected</mat-option>
+				<mat-option *ngFor="let c of this.ingredientCategories" [value]="c.toUpperCase()">
+					{{c}}
+				</mat-option>
+			</mat-select>
+		</mat-form-field>
+		<mat-form-field appearance="fill">
+			<mat-label>Default Unit</mat-label>
+			<mat-select matInput formControlName="defaultUnit">
+				<mat-option [value]="null">No option selected</mat-option>
+				<mat-option *ngFor="let defaultUnit of this.ingredientUnits" [value]="defaultUnit.toUpperCase()">
+					{{defaultUnit}}
+				</mat-option>
+			</mat-select>
+		</mat-form-field>
+
+		<form formGroupName="makroNutrients" class="subform">
+			<h3>Makro Nutriends:</h3>
+			<mat-form-field appearance="fill">
+				<mat-label>Sugar (in g)</mat-label>
+				<input matInput type="number" formControlName="sugar">
+			</mat-form-field>
+			<mat-form-field appearance="fill">
+				<mat-label>Carbohydrates other then sugar (in g): </mat-label>
+				<input matInput type="number" formControlName="carbohydrates">
+			</mat-form-field>
+			<mat-form-field appearance="fill">
+				<mat-label>Saturated Fat (in g)</mat-label>
+				<input matInput type="number" formControlName="saturatedFat">
+			</mat-form-field>
+			<mat-form-field appearance="fill">
+				<mat-label>Unsaturated Fat (in g)</mat-label>
+				<input matInput type="number" formControlName="unsaturatedFat">
+			</mat-form-field>
+			<mat-form-field appearance="fill">
+				<mat-label>Fiber (in g)</mat-label>
+				<input matInput type="number" formControlName="fiber">
+			</mat-form-field>
+			<mat-form-field appearance="fill">
+				<mat-label>Protein (in g)</mat-label>
+				<input matInput type="number" formControlName="protein">
+			</mat-form-field>
+			<mat-form-field appearance="fill">
+				<mat-label>Calories (in kcal)</mat-label>
+				<input matInput type="number" formControlName="calories">
+			</mat-form-field>
+		</form>
+		<button>Submit</button>
+	</form>
+</div>

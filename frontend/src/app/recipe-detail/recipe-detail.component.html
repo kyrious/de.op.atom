@@ -1,0 +1,44 @@
+<div>
+	<form [formGroup]="this.recipeForm" (ngSubmit)="onSubmit(recipeForm.value)">
+		<mat-form-field appearance="fill">
+			<mat-label>Name</mat-label>
+			<input matInput type="text" formControlName="name">
+		</mat-form-field>
+		<mat-form-field appearance="fill">
+			<mat-label>Description</mat-label>
+			<textarea matInput type="text" formControlName="description"></textarea>
+		</mat-form-field>
+		<div id="recipeParts">
+			<ng-container [formArrayName]="'parts'">
+				<div *ngFor="let p of this.partArray.controls; index as i">
+					<ng-container [formGroupName]="i">
+						<mat-form-field appearance="fill">
+							<mat-label>Amount</mat-label>
+							<input matInput type="number" formControlName="amount">
+						</mat-form-field>
+						<mat-form-field appearance="fill">
+							<mat-label>Ingredient</mat-label>
+
+							<mat-select matInput type="text" formControlName="ingredient"
+								(select)="onIngredientSelect(this)">
+								<!--
+									-->
+								<mat-option>
+								<ngx-mat-select-search [placeholderLabel]="'Search Item'"
+									[noEntriesFoundLabel]="'No matching records found'" formControlName="ingredient"
+									ngDefaultControl></ngx-mat-select-search>
+								</mat-option>
+								<mat-option *ngFor="let ing of this.ingredients" [value]="ing">
+									{{ing.name}}
+								</mat-option>
+							</mat-select>
+						</mat-form-field>
+
+					</ng-container>
+				</div>
+			</ng-container>
+			<button type="button" (click)="this.addNewPart()">Add Part</button>
+		</div>
+		<button>Submit</button>
+	</form>
+</div>

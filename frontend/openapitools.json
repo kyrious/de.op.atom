@@ -5,7 +5,7 @@
     "generators": {
 		"core":{
 	        "generatorName": "typescript-angular",
-			"glob": "../api/*.yaml",
+			"glob": "../backend/src/main/api/*.yaml",
 	        "output": "./gen/"
 		}
 	}

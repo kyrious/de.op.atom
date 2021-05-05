@@ -1,0 +1,26 @@
+<h1>Ingredients</h1>
+<div>
+	<mat-icon aria-hidden="false" [routerLink]="'/ingredient'">edit</mat-icon>
+</div>
+<table>
+	<tr>
+		<th>Link</th>
+		<th>Id</th>
+		<th>Name</th>
+		<th>Category</th>
+		<th>Makro Nutrient</th>
+		<th>Default Unit</th>
+		<th>Version</th>
+	</tr>
+	<tr *ngFor="let ing of this.ingredients">
+		<td>
+			<mat-icon aria-hidden="false" [routerLink]="'/ingredient/'+[ing.id]">edit</mat-icon>
+		</td>
+		<td>{{ing.id}}</td>
+		<td>{{ing.name}}</td>
+		<td>{{ing.category}}</td>
+		<td>{{ing.makroNutrients}}</td>
+		<td>{{ing.defaultUnit}}</td>
+		<td>{{ing.version}}</td>
+	</tr>
+</table>
