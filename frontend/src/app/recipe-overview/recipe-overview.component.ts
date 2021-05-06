@@ -9,6 +9,8 @@ import { HeaderTitleServiceService } from './../core/header-title-service.servic
 })
 export class RecipeOverviewComponent implements OnInit {
 
+	public static ROUTE = 'recipes';
+	
 	recipes: Array<Recipe>;
 
 	constructor(

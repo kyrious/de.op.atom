@@ -3,8 +3,11 @@ import { Recipe, RecipePart, RecipeService, Ingredient, IngredientService } from
 import { ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, FormArray, Validators, FormControl } from '@angular/forms';
 import { HeaderTitleServiceService } from '../core/header-title-service.service';
-import { Observable, Observer, Subject } from 'rxjs';
+import { Observable, Observer, Subject, ReplaySubject } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
+import { take, takeUntil } from 'rxjs/operators';
+import { Router } from '@angular/router';
+import { RecipeOverviewComponent } from './../recipe-overview/recipe-overview.component';
 
 @Component({
 	selector: 'app-recipe-detail',
@@ -13,33 +16,33 @@ import { map, startWith } from 'rxjs/operators';
 })
 export class RecipeDetailComponent implements OnInit {
 
+	public static ROUTE_WITH_ID = 'recipe/:id';
+	public static ROUTE_WITHOUT_ID = 'recipe';
+
 	private id: number;
 	recipe?: Recipe;
 	recipeForm: FormGroup;
 	partArray: FormArray;
 	ingredients: Ingredient[];
-	private filteredIngredients: Subject<Ingredient[]>;
-	filteredIngredientsObs: Observable<Ingredient[]>;
+	filteredIngredients: ReplaySubject<Ingredient[]>[];
 
 
 	constructor(private route: ActivatedRoute,
 		private recipeService: RecipeService,
 		private ingredientService: IngredientService,
 		private fb: FormBuilder,
-		private headerTiltleService: HeaderTitleServiceService) {
-
+		private headerTiltleService: HeaderTitleServiceService,
+		private router: Router) {
 		this.headerTiltleService.nextTitle("RecipeDetail");
 	}
 
 
 	ngOnInit(): void {
-		this.filteredIngredients = new Subject();
-		this.filteredIngredientsObs = this.filteredIngredients.asObservable();
-
 		this.partArray = this.fb.array([]);
+		this.filteredIngredients = [];
 		this.recipeForm = this.fb.group({
-			name: [null, Validators.required],
-			description: [null, Validators.required],
+			name: [null, Validators.compose([Validators.required])],
+			description: [null, Validators.compose([Validators.required])],
 			parts: this.partArray
 		});
 
@@ -48,9 +51,9 @@ export class RecipeDetailComponent implements OnInit {
 			this.updateRecipe();
 		}
 
-
 		this.ingredientService.getIngredients().subscribe(ings => {
 			this.ingredients = ings;
+			this.filteredIngredients.forEach(filteredIng => filteredIng.next(ings));
 		});
 	}
 
@@ -58,50 +61,49 @@ export class RecipeDetailComponent implements OnInit {
 		this.recipeService.getRecipebyId(this.id).subscribe((r) => {
 			this.recipe = r;
 			this.recipeForm.patchValue(r);
+			for (var i = 0; i < r.parts.length; i++) {
+				this.partArray.push(this.recipePartToFormGroup(i, r.parts[i]));
+			}
 			r.parts.forEach(p => {
-				this.partArray.push(this.recipePartToFormGroup(p));
 			});
 		});
 	}
 
 	addNewPart(): void {
-		this.partArray.push(this.recipePartToFormGroup(<RecipePart>{}));
+		this.partArray.push(this.recipePartToFormGroup(this.partArray.length, <RecipePart>{}));
+	}
+	
+	removePart(index: number): void {
+		this.partArray.removeAt(index);
 	}
 
-	private recipePartToFormGroup(p: RecipePart): FormGroup {
+	private recipePartToFormGroup(index: number, p: RecipePart): FormGroup {
 		const formGroup = this.fb.group({
 			id: [p.id],
 			version: [p.version],
-			ingredient: [p.ingredient, Validators.required],
-			amount: [p.amount, Validators.required],
+			ingredient: [p.ingredient, Validators.compose([Validators.required])],
+			ingredientFilter: new FormControl(),
+			amount: [p.amount, Validators.compose([Validators.required])],
 			unit: [p?.unit ? p?.unit : p?.ingredient?.defaultUnit]
-		})
-		formGroup.get('ingredient').valueChanges.pipe(
+		});
+
+		this.filteredIngredients[index] = new ReplaySubject<Ingredient[]>(1);
+		formGroup.get('ingredientFilter').valueChanges.pipe(
 			startWith(''),
 			map(value => typeof value === 'string' ? value : value.name),
-			map(name => name ? this.filterIngredients(name) : this.ingredients.slice())
-		).forEach(i => this.filteredIngredients.next(i));
+			map(name => name ? this.filterIngredients(name) : this.ingredients?.slice())
+		).forEach(i => this.filteredIngredients[index].next(i));
 		return formGroup;
-	}
-
-	private filterIngredients(name: string): Ingredient[] {
-		const filterValue = name.toLowerCase();
-		const filtered = this.ingredients.filter(ing => ing.name.toLowerCase().indexOf(filterValue) >= 0);
-		return filtered;
-	}
-
-	onIngredientSelect(fc: FormControl): void {
-		console.log(fc);
 	}
 
 	onSubmit(recipe: Recipe): void {
 		if (!this.recipeForm.valid) {
-			console.log(this.recipeForm.valid);
 			return;
 		}
 		if (this.recipe != null) {
 			recipe.id = this.recipe.id;
 			recipe.version = this.recipe.version;
+			recipe.parts.forEach(part => delete part["ingredientFilter"]);
 			this.recipeService.putRecipeToId(this.recipe.id, recipe).subscribe({
 				next: data => {
 					console.log(data);
@@ -121,14 +123,24 @@ export class RecipeDetailComponent implements OnInit {
 			});
 		}
 		this.updateRecipe();
+		/*
+		this.router.navigateByUrl(RecipeOverviewComponent.ROUTE).then(() => {
+			window.location.reload();
+		});
+		*/
 	}
 
-	displayIngredient(ing: Ingredient): string {
-		if (ing) {
-			return ing.name;
-		}
-		else {
-			return '';
-		}
+	private filterIngredients(name: string): Ingredient[] {
+		const filterValue = name.toLowerCase();
+		const filtered = this.ingredients.filter(ing => ing.name.toLowerCase().indexOf(filterValue) >= 0);
+		return filtered;
 	}
+
+	compareIngredients(i1: Ingredient, i2: Ingredient): boolean {
+		if (i1?.id === i2?.id) {
+			return true;
+		}
+		return false;
+	}
+
 }

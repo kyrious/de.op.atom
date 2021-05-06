@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { IngredientService, Ingredient, Unit } from 'gen';
 import { ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { IngredientOverviewComponent } from './../ingredient-overview/ingredient-overview.component';
 
 @Component({
 	selector: 'app-ingredient-detail',
@@ -10,6 +12,9 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 })
 export class IngredientDetailComponent implements OnInit {
 
+	public static ROUTE_WITH_ID = 'ingredient/:id';
+	public static ROUTE_WITHOUT_ID = 'ingredient';
+	
 	private id: number;
 	ingredient?: Ingredient;
 	ingredientForm: FormGroup;
@@ -19,7 +24,8 @@ export class IngredientDetailComponent implements OnInit {
 	constructor(
 		private route: ActivatedRoute,
 		private ingredientService: IngredientService,
-		private fb: FormBuilder
+		private fb: FormBuilder,
+		private router: Router
 	) {
 		this.ingredientCategories = Object.keys(Ingredient.CategoryEnum);
 		this.ingredientUnits = Object.keys(Unit);
@@ -79,6 +85,9 @@ export class IngredientDetailComponent implements OnInit {
 			});
 		}
 		this.updateIngredient();
+		this.router.navigateByUrl(IngredientOverviewComponent.ROUTE).then(() => {
+			window.location.reload();
+		});;
 	}
 
 	compareCategoryObjects(object1: any, object2: any) {

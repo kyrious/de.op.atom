@@ -19,21 +19,23 @@
 						<mat-form-field appearance="fill">
 							<mat-label>Ingredient</mat-label>
 
-							<mat-select matInput type="text" formControlName="ingredient"
-								(select)="onIngredientSelect(this)">
-								<!--
-									-->
+							<mat-select 
+								formControlName="ingredient" 
+								placeholder="Bank"
+								[compareWith]="compareIngredients">
 								<mat-option>
-								<ngx-mat-select-search [placeholderLabel]="'Search Item'"
-									[noEntriesFoundLabel]="'No matching records found'" formControlName="ingredient"
-									ngDefaultControl></ngx-mat-select-search>
+									<ngx-mat-select-search 
+										formControlName="ingredientFilter">
+									</ngx-mat-select-search>
 								</mat-option>
-								<mat-option *ngFor="let ing of this.ingredients" [value]="ing">
+								<mat-option 
+									*ngFor="let ing of this.filteredIngredients[i] | async" 
+									[value]="ing">
 									{{ing.name}}
 								</mat-option>
 							</mat-select>
 						</mat-form-field>
-
+						<button type="button" (click)="this.removePart(i)">Remove Part</button>
 					</ng-container>
 				</div>
 			</ng-container>
