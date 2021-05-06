@@ -64,8 +64,6 @@ export class RecipeDetailComponent implements OnInit {
 			for (var i = 0; i < r.parts.length; i++) {
 				this.partArray.push(this.recipePartToFormGroup(i, r.parts[i]));
 			}
-			r.parts.forEach(p => {
-			});
 		});
 	}
 
@@ -123,11 +121,9 @@ export class RecipeDetailComponent implements OnInit {
 			});
 		}
 		this.updateRecipe();
-		/*
 		this.router.navigateByUrl(RecipeOverviewComponent.ROUTE).then(() => {
 			window.location.reload();
 		});
-		*/
 	}
 
 	private filterIngredients(name: string): Ingredient[] {
