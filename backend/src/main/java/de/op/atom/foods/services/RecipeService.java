@@ -9,8 +9,9 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import de.op.atom.foods.domain.Recipe;
-import de.op.atom.foods.domain.RecipePart;
+import de.op.atom.core.AbstractEntity;
+import de.op.atom.foods.domain.entity.Recipe;
+import de.op.atom.foods.domain.entity.RecipePart;
 
 @ApplicationScoped
 public class RecipeService {
@@ -29,22 +30,22 @@ public class RecipeService {
 
     public long updateOrCreate(Recipe recipe) {
         Long postedId = recipe.getId();
-        Recipe alyreadyExistent = null;
+        Recipe alreadyExistent = null;
         if (postedId != null) {
-            alyreadyExistent = em.find(Recipe.class, postedId);
+            alreadyExistent = em.find(Recipe.class, postedId);
         }
-        if (alyreadyExistent != null) {
+        if (alreadyExistent != null) {
             recipe.getParts()
                   .forEach(this::updateOrCreate);
             Set<Long> parts = recipe.getParts()
                                     .stream()
                                     .map(this::updateOrCreate)
-                                    .map(p -> p.getId())
+                                    .map(AbstractEntity::getId)
                                     .collect(Collectors.toSet());
-            alyreadyExistent.getParts()
-                            .stream()
-                            .filter(p -> !parts.contains(p.getId()))
-                            .forEach(this::deleteRecipepart);
+            alreadyExistent.getParts()
+                           .stream()
+                           .filter(p -> !parts.contains(p.getId()))
+                           .forEach(this::deleteRecipePart);
 
             em.merge(recipe);
         } else {
@@ -55,11 +56,11 @@ public class RecipeService {
 
     private RecipePart updateOrCreate(RecipePart part) {
         Long postedId = part.getId();
-        RecipePart alyreadyExistent = null;
+        RecipePart alreadyExistent = null;
         if (postedId != null) {
-            alyreadyExistent = em.find(RecipePart.class, postedId);
+            alreadyExistent = em.find(RecipePart.class, postedId);
         }
-        if (alyreadyExistent != null) {
+        if (alreadyExistent != null) {
             return em.merge(part);
         } else {
             em.persist(part);
@@ -67,7 +68,7 @@ public class RecipeService {
         }
     }
 
-    private void deleteRecipepart(RecipePart p) {
+    private void deleteRecipePart(RecipePart p) {
         RecipePart r = em.find(RecipePart.class, p.getId());
         if (r == null) {
             throw new NoSuchElementException();

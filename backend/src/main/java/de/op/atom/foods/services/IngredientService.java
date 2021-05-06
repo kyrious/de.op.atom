@@ -7,7 +7,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import de.op.atom.foods.domain.Ingredient;
+import de.op.atom.foods.domain.entity.Ingredient;
 
 @ApplicationScoped
 public class IngredientService {
@@ -30,11 +30,11 @@ public class IngredientService {
 
     public long updateOrCreate(Ingredient ing) {
         Long postedId = ing.getId();
-        Ingredient alyreadyExistent = null;
+        Ingredient alreadyExistent = null;
         if (postedId != null) {
-            alyreadyExistent = em.find(Ingredient.class, postedId);
+            alreadyExistent = em.find(Ingredient.class, postedId);
         }
-        if (alyreadyExistent != null) {
+        if (alreadyExistent != null) {
             em.merge(ing);
         } else {
             em.persist(ing);
