@@ -20,7 +20,7 @@ public class FoodsApiProviderImpl implements FoodsApiService {
 
     @Override
     public Response getIngredientbyId(Long id, SecurityContext securityContext) throws NotFoundException {
-        return this.ingredientApiProvider.getIngredientbyId(id, securityContext);
+        return this.ingredientApiProvider.getIngredientById(id, securityContext);
     }
 
     @Override

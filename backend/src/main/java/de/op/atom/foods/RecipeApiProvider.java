@@ -14,9 +14,9 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.SecurityContext;
 
 import de.op.atom.core.ErrorResponseBuilder;
-import de.op.atom.foods.domain.Ingredient;
-import de.op.atom.foods.domain.Recipe;
-import de.op.atom.foods.domain.RecipePart;
+import de.op.atom.foods.domain.entity.Ingredient;
+import de.op.atom.foods.domain.entity.Recipe;
+import de.op.atom.foods.domain.entity.RecipePart;
 import de.op.atom.foods.mapper.RecipeMapper;
 import de.op.atom.foods.services.IngredientService;
 import de.op.atom.foods.services.RecipeService;

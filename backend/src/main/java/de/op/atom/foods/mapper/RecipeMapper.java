@@ -5,7 +5,7 @@ import javax.enterprise.context.ApplicationScoped;
 import org.modelmapper.convention.MatchingStrategies;
 
 import de.op.atom.core.AbstractEntityMapper;
-import de.op.atom.foods.domain.Recipe;
+import de.op.atom.foods.domain.entity.Recipe;
 import de.op.atom.gen.foods.model.RecipeDTO;
 
 @ApplicationScoped

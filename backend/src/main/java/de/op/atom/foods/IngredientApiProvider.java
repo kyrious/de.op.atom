@@ -14,7 +14,7 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.SecurityContext;
 
 import de.op.atom.core.ErrorResponseBuilder;
-import de.op.atom.foods.domain.Ingredient;
+import de.op.atom.foods.domain.entity.Ingredient;
 import de.op.atom.foods.mapper.IngredientMapper;
 import de.op.atom.foods.services.IngredientService;
 import de.op.atom.gen.api.NotFoundException;
@@ -29,7 +29,7 @@ public class IngredientApiProvider {
     IngredientMapper ingredientMapper;
 
     @Transactional
-    public Response getIngredientbyId(Long id, SecurityContext securityContext) throws NotFoundException {
+    public Response getIngredientById(Long id, SecurityContext securityContext) throws NotFoundException {
         Ingredient ingredientWithId = this.ingredientService.getIngredientWithId(id);
         IngredientDTO dto = this.ingredientMapper.createDtoFromEntity(ingredientWithId);
         return Response.ok(dto)
