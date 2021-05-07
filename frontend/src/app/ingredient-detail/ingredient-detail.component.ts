@@ -1,97 +1,85 @@
-import { Component, OnInit } from '@angular/core';
-import { IngredientService, Ingredient, Unit } from 'gen';
-import { ActivatedRoute } from '@angular/router';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
-import { IngredientOverviewComponent } from './../ingredient-overview/ingredient-overview.component';
+import {Component, OnInit} from '@angular/core';
+import {IngredientService, Ingredient, Unit} from 'gen';
+import {ActivatedRoute} from '@angular/router';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {Router} from '@angular/router';
+import {IngredientOverviewComponent} from '../ingredient-overview/ingredient-overview.component';
+import {Observable} from 'rxjs';
 
 @Component({
-	selector: 'app-ingredient-detail',
-	templateUrl: './ingredient-detail.component.html',
-	styleUrls: ['./ingredient-detail.component.css']
+  selector: 'app-ingredient-detail',
+  templateUrl: './ingredient-detail.component.html',
+  styleUrls: ['./ingredient-detail.component.css']
 })
 export class IngredientDetailComponent implements OnInit {
 
-	public static ROUTE_WITH_ID = 'ingredient/:id';
-	public static ROUTE_WITHOUT_ID = 'ingredient';
-	
-	private id: number;
-	ingredient?: Ingredient;
-	ingredientForm: FormGroup;
-	ingredientCategories: Array<string>;
-	ingredientUnits: Array<string>;
+  public static ROUTE_WITH_ID = 'ingredient/:id';
+  public static ROUTE_WITHOUT_ID = 'ingredient';
 
-	constructor(
-		private route: ActivatedRoute,
-		private ingredientService: IngredientService,
-		private fb: FormBuilder,
-		private router: Router
-	) {
-		this.ingredientCategories = Object.keys(Ingredient.CategoryEnum);
-		this.ingredientUnits = Object.keys(Unit);
-	}
+  private id: number;
+  ingredient?: Ingredient;
+  ingredientForm: FormGroup;
+  ingredientCategories: Array<string>;
+  ingredientUnits: Array<string>;
 
-	ngOnInit(): void {
-		this.ingredientForm = this.fb.group({
-			name: [null, Validators.required],
-			category: [null, Validators.required],
-			defaultUnit: [null, Validators.required],
-			makroNutrients: this.fb.group({
-				sugar: [null, Validators.required],
-				carbohydrates: [null, Validators.required],
-				saturatedFat: [null, Validators.required],
-				unsaturatedFat: [null, Validators.required],
-				fiber: [null, Validators.required],
-				protein: [null, Validators.required],
-				calories: [null, Validators.required]
-			})
-		});
-		this.id = +this.route.snapshot.paramMap.get('id');
-		if (this.id) {
-			this.updateIngredient();
-		}
-	}
+  constructor(
+    private route: ActivatedRoute,
+    private ingredientService: IngredientService,
+    private fb: FormBuilder,
+    private router: Router
+  ) {
+    this.ingredientCategories = Object.keys(Ingredient.CategoryEnum);
+    this.ingredientUnits = Object.keys(Unit);
+  }
 
-	updateIngredient(): void {
-		this.ingredientService.getIngredientbyId(this.id).subscribe((ing) => {
-			this.ingredient = ing;
-			this.ingredientForm.patchValue(ing);
-		});
-	}
+  ngOnInit(): void {
+    this.ingredientForm = this.fb.group({
+      name: [null, Validators.required],
+      category: [null, Validators.required],
+      defaultUnit: [null, Validators.required],
+      makroNutrients: this.fb.group({
+        sugar: [null, Validators.required],
+        carbohydrates: [null, Validators.required],
+        saturatedFat: [null, Validators.required],
+        unsaturatedFat: [null, Validators.required],
+        fiber: [null, Validators.required],
+        protein: [null, Validators.required],
+        calories: [null, Validators.required]
+      })
+    });
+    this.id = +this.route.snapshot.paramMap.get('id');
+    if (this.id) {
+      this.updateIngredient();
+    }
+  }
 
-	onSubmit(ingredient: Ingredient): void {
-		if (!this.ingredientForm.valid) {
-			return;
-		}
-		if (this.ingredient != null) {
-			ingredient.id = this.ingredient.id;
-			ingredient.version = this.ingredient.version;
-			this.ingredientService.putIngredientToId(this.ingredient.id, ingredient).subscribe({
-				next: data => {
-					console.log(data);
-				},
-				error: error => {
-					console.error(error.error);
-				}
-			});
-		} else {
-			this.ingredientService.postNewIngredients(ingredient).subscribe({
-				next: data => {
-					console.log(data);
-				},
-				error: error => {
-					console.error(error.error);
-				}
-			});
-		}
-		this.updateIngredient();
-		this.router.navigateByUrl(IngredientOverviewComponent.ROUTE).then(() => {
-			window.location.reload();
-		});;
-	}
+  updateIngredient(): void {
+    this.ingredientService.getIngredientbyId(this.id).subscribe((ing) => {
+      this.ingredient = ing;
+      this.ingredientForm.patchValue(ing);
+    });
+  }
 
-	compareCategoryObjects(object1: any, object2: any) {
-		return object1 && object2 && object1.id == object2.id;
-	}
+  onSubmit(ingredient: Ingredient): void {
+    if (!this.ingredientForm.valid) {
+      return;
+    }
+
+    let req: Observable<Ingredient>;
+    if (this.ingredient != null) {
+      ingredient.id = this.ingredient.id;
+      ingredient.version = this.ingredient.version;
+      req = this.ingredientService.putIngredientToId(this.ingredient.id, ingredient);
+    } else {
+      req = this.ingredientService.postNewIngredients(ingredient);
+    }
+
+    req.subscribe(() => this.router.navigateByUrl(IngredientOverviewComponent.ROUTE),
+      err => console.error(err.error));
+  }
+
+  compareCategoryObjects(object1: any, object2: any): boolean {
+    return object1 && object2 && object1.id === object2.id;
+  }
 
 }
