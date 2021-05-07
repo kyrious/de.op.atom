@@ -7,7 +7,7 @@ import { Observable, Observer, Subject, ReplaySubject } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { take, takeUntil } from 'rxjs/operators';
 import { Router } from '@angular/router';
-import { RecipeOverviewComponent } from './../recipe-overview/recipe-overview.component';
+import { RecipeOverviewComponent } from '../recipe-overview/recipe-overview.component';
 
 @Component({
 	selector: 'app-recipe-detail',
@@ -31,9 +31,9 @@ export class RecipeDetailComponent implements OnInit {
 		private recipeService: RecipeService,
 		private ingredientService: IngredientService,
 		private fb: FormBuilder,
-		private headerTiltleService: HeaderTitleServiceService,
+		private headerTitleService: HeaderTitleServiceService,
 		private router: Router) {
-		this.headerTiltleService.nextTitle("RecipeDetail");
+		this.headerTitleService.nextTitle("RecipeDetail");
 	}
 
 
@@ -70,7 +70,7 @@ export class RecipeDetailComponent implements OnInit {
 	addNewPart(): void {
 		this.partArray.push(this.recipePartToFormGroup(this.partArray.length, <RecipePart>{}));
 	}
-	
+
 	removePart(index: number): void {
 		this.partArray.removeAt(index);
 	}
@@ -133,10 +133,7 @@ export class RecipeDetailComponent implements OnInit {
 	}
 
 	compareIngredients(i1: Ingredient, i2: Ingredient): boolean {
-		if (i1?.id === i2?.id) {
-			return true;
-		}
-		return false;
+		return i1?.id === i2?.id;
 	}
 
 }
