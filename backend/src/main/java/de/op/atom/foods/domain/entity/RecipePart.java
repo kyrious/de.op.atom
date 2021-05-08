@@ -1,4 +1,4 @@
-package de.op.atom.foods.domain;
+package de.op.atom.foods.domain.entity;
 
 import java.util.Objects;
 
@@ -9,6 +9,7 @@ import javax.validation.constraints.NotNull;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import de.op.atom.core.AbstractEntity;
+import de.op.atom.foods.domain.enums.Unit;
 import io.swagger.annotations.ApiModelProperty;
 
 @Entity

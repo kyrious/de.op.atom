@@ -1,4 +1,4 @@
-package de.op.atom.foods.domain;
+package de.op.atom.foods.domain.entity;
 
 import java.util.Objects;
 

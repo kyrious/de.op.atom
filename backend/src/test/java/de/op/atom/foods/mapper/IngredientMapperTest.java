@@ -7,8 +7,8 @@ import javax.inject.Inject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import de.op.atom.foods.domain.Ingredient;
-import de.op.atom.foods.domain.IngredientCategory;
+import de.op.atom.foods.domain.entity.Ingredient;
+import de.op.atom.foods.domain.enums.IngredientCategory;
 import de.op.atom.gen.foods.model.IngredientDTO;
 import de.op.atom.gen.foods.model.IngredientDTO.CategoryEnum;
 import de.op.atom.gen.foods.model.MakroNutrientsDTO;

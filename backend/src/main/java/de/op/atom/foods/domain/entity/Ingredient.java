@@ -1,10 +1,12 @@
-package de.op.atom.foods.domain;
+package de.op.atom.foods.domain.entity;
 
 import javax.persistence.Entity;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 
 import de.op.atom.core.AbstractEntity;
+import de.op.atom.foods.domain.enums.IngredientCategory;
+import de.op.atom.foods.domain.enums.Unit;
 
 @Entity
 @NamedQueries(@NamedQuery(name = Ingredient.SELECT_ALL_INGREDIENTS, query= "select e from Ingredient e"))
