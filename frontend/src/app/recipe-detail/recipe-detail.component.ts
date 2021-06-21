@@ -4,7 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, FormArray, Validators, FormControl } from '@angular/forms';
 import { HeaderTitleServiceService } from '../core/header-title-service.service';
 import { Observable, ReplaySubject } from 'rxjs';
-import { catchError, map, startWith } from 'rxjs/operators';
+import { catchError, map, startWith , filter} from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { RecipeOverviewComponent } from './../recipe-overview/recipe-overview.component';
 
@@ -78,6 +78,16 @@ export class RecipeDetailComponent implements OnInit {
 			amount: [p.amount, Validators.compose([Validators.required])],
 			unit: [p?.unit ? p?.unit : p?.ingredient?.defaultUnit]
 		});
+		formGroup.get('ingredient').valueChanges.pipe(
+			filter(ing => ing !== null),
+			map(ing => ing.defaultUnit)
+		).subscribe(unit => {
+			let unitControl = this.partArray.at(index).get('unit');
+			console.log(unit)
+			if (!unitControl.value) {
+				unitControl.patchValue(unit);
+			}
+		});
 		return formGroup;
 	}
 
@@ -109,12 +119,6 @@ export class RecipeDetailComponent implements OnInit {
 		});
 	}
 
-	private filterIngredients(name: string): Ingredient[] {
-		const filterValue = name.toLowerCase();
-		const filtered = this.ingredients.filter(ing => ing.name.toLowerCase().indexOf(filterValue) >= 0);
-		return filtered;
-	}
-
 	compareIngredients(i1: Ingredient, i2: Ingredient): boolean {
 		if (i1?.id === i2?.id) {
 			return true;
@@ -129,7 +133,7 @@ export class RecipeDetailComponent implements OnInit {
 	possibleIngredients(): Ingredient[] {
 		return this.ingredients.slice();
 	}
-	
+
 	compareUnits(u1: Unit, u2: Unit): boolean {
 		return u1 === u2;
 	}
