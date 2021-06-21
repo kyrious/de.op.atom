@@ -1,5 +1,5 @@
 <div>
-	<form [formGroup]="this.recipeForm" (ngSubmit)="onSubmit(recipeForm.value)">
+	<form [formGroup]="this.recipeForm" (ngSubmit)="onSubmit(recipeForm.getRawValue())">
 		<mat-form-field appearance="fill">
 			<mat-label>Name</mat-label>
 			<input matInput type="text" formControlName="name">
@@ -9,32 +9,21 @@
 			<textarea matInput type="text" formControlName="description"></textarea>
 		</mat-form-field>
 		<div id="recipeParts">
-			<ng-container [formArrayName]="'parts'">
+			<ng-container formArrayName="parts">
 				<div *ngFor="let p of this.partArray.controls; index as i">
 					<ng-container [formGroupName]="i">
+						<atom-filterable-select label="Ingredient" formControlNaming="ingredient"
+							[parentFormGroup]="partArray.get(i+'')" [compare]="compareIngredients"
+							[displayFunction]="displayIngredient" [options]="possibleIngredients()">
+						</atom-filterable-select>
 						<mat-form-field appearance="fill">
 							<mat-label>Amount</mat-label>
 							<input matInput type="number" formControlName="amount">
 						</mat-form-field>
-						<mat-form-field appearance="fill">
-							<mat-label>Ingredient</mat-label>
-
-							<mat-select 
-								formControlName="ingredient" 
-								placeholder="Bank"
-								[compareWith]="compareIngredients">
-								<mat-option>
-									<ngx-mat-select-search 
-										formControlName="ingredientFilter">
-									</ngx-mat-select-search>
-								</mat-option>
-								<mat-option 
-									*ngFor="let ing of this.filteredIngredients[i] | async" 
-									[value]="ing">
-									{{ing.name}}
-								</mat-option>
-							</mat-select>
-						</mat-form-field>
+						<atom-filterable-select label="Unit" formControlNaming="unit"
+							[parentFormGroup]="partArray.get(i+'')" [compare]="compareUnits"
+							[displayFunction]="displayUnit" [options]="possibleUnits()">
+						</atom-filterable-select>
 						<button type="button" (click)="this.removePart(i)">Remove Part</button>
 					</ng-container>
 				</div>

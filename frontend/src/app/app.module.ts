@@ -24,6 +24,8 @@ import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { HomeComponent } from './home/home.component';
 import { RecipeOverviewComponent } from './recipe-overview/recipe-overview.component';
 import { RecipeDetailComponent } from './recipe-detail/recipe-detail.component';
+import { FilterableSelectComponent } from './core/filterable-select/filterable-select.component';
+import { CommonModule } from '@angular/common';
 
 
 @NgModule({
@@ -34,9 +36,11 @@ import { RecipeDetailComponent } from './recipe-detail/recipe-detail.component';
     IngredientOverviewComponent,
     HomeComponent,
     RecipeOverviewComponent,
-    RecipeDetailComponent
+    RecipeDetailComponent,
+    FilterableSelectComponent
   ],
   imports: [
+	CommonModule,
     BrowserModule,
     ApiModule,
     HttpClientModule,

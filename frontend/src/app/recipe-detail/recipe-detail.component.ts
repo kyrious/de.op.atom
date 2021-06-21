@@ -1,128 +1,145 @@
-import {Component, OnInit} from '@angular/core';
-import {Recipe, RecipePart, RecipeService, Ingredient, IngredientService} from 'gen';
-import {ActivatedRoute} from '@angular/router';
-import {FormBuilder, FormGroup, FormArray, Validators, FormControl} from '@angular/forms';
-import {HeaderTitleServiceService} from '../core/header-title-service.service';
-import {Observable, ReplaySubject} from 'rxjs';
-import {map, startWith} from 'rxjs/operators';
-import {Router} from '@angular/router';
-import {RecipeOverviewComponent} from '../recipe-overview/recipe-overview.component';
+import { Component, OnInit } from '@angular/core';
+import { Recipe, RecipePart, RecipeService, Ingredient, IngredientService, Unit } from 'gen';
+import { ActivatedRoute } from '@angular/router';
+import { FormBuilder, FormGroup, FormArray, Validators, FormControl } from '@angular/forms';
+import { HeaderTitleServiceService } from '../core/header-title-service.service';
+import { Observable, ReplaySubject } from 'rxjs';
+import { catchError, map, startWith } from 'rxjs/operators';
+import { Router } from '@angular/router';
+import { RecipeOverviewComponent } from './../recipe-overview/recipe-overview.component';
 
 @Component({
-  selector: 'app-recipe-detail',
-  templateUrl: './recipe-detail.component.html',
-  styleUrls: ['./recipe-detail.component.css']
+	selector: 'app-recipe-detail',
+	templateUrl: './recipe-detail.component.html',
+	styleUrls: ['./recipe-detail.component.css']
 })
 export class RecipeDetailComponent implements OnInit {
 
-  public static ROUTE_WITH_ID = 'recipe/:id';
-  public static ROUTE_WITHOUT_ID = 'recipe';
+	public static ROUTE_WITH_ID = 'recipe/:id';
+	public static ROUTE_WITHOUT_ID = 'recipe';
 
-  private id: number;
-  recipe?: Recipe;
-  recipeForm: FormGroup;
-  partArray: FormArray;
-  ingredients: Ingredient[];
-  filteredIngredients: ReplaySubject<Ingredient[]>[];
+	private id: number;
+	recipe?: Recipe;
+	recipeForm: FormGroup;
+	partArray: FormArray;
+	ingredients: Ingredient[];
 
-
-  constructor(private route: ActivatedRoute,
-              private recipeService: RecipeService,
-              private ingredientService: IngredientService,
-              private fb: FormBuilder,
-              private headerTitleService: HeaderTitleServiceService,
-              private router: Router) {
-    this.headerTitleService.nextTitle('RecipeDetail');
-  }
+	constructor(private route: ActivatedRoute,
+		private recipeService: RecipeService,
+		private ingredientService: IngredientService,
+		private fb: FormBuilder,
+		private headerTiltleService: HeaderTitleServiceService,
+		private router: Router) {
+		this.headerTiltleService.nextTitle("RecipeDetail");
+	}
 
 
-  ngOnInit(): void {
-    this.partArray = this.fb.array([]);
-    this.filteredIngredients = [];
-    this.recipeForm = this.fb.group({
-      name: [null, Validators.compose([Validators.required])],
-      description: [null, Validators.compose([Validators.required])],
-      parts: this.partArray
-    });
+	ngOnInit(): void {
+		this.partArray = this.fb.array([]);
+		this.recipeForm = this.fb.group({
+			name: [null, Validators.compose([Validators.required])],
+			description: [null, Validators.compose([Validators.required])],
+			parts: this.partArray
+		});
 
-    this.id = +this.route.snapshot.paramMap.get('id');
-    if (this.id) {
-      this.updateRecipe();
-    }
+		this.id = +this.route.snapshot.paramMap.get('id');
+		if (this.id) {
+			this.updateRecipe();
+		}
 
-    this.ingredientService.getIngredients().subscribe(ings => {
-      this.ingredients = ings;
-      this.filteredIngredients.forEach(filteredIng => filteredIng.next(ings));
-    });
-  }
+		this.ingredientService.getIngredients().subscribe(ings => {
+			this.ingredients = ings;
+		});
+	}
 
-  private updateRecipe(): void {
-    this.recipeService.getRecipebyId(this.id).subscribe((r) => {
-      this.recipe = r;
-      this.recipeForm.patchValue(r);
-      for (let i = 0; i < r.parts.length; i++) {
-        this.partArray.push(this.recipePartToFormGroup(i, r.parts[i]));
-      }
-    });
-  }
+	private updateRecipe(): void {
+		this.recipeService.getRecipebyId(this.id).subscribe((r) => {
+			this.recipe = r;
+			this.recipeForm.patchValue(r);
+			for (var i = 0; i < r.parts.length; i++) {
+				this.partArray.push(this.recipePartToFormGroup(i, r.parts[i]));
+			}
+		});
+	}
 
-  addNewPart(): void {
-    this.partArray.push(this.recipePartToFormGroup(this.partArray.length, {} as RecipePart));
-  }
+	addNewPart(): void {
+		this.partArray.push(this.recipePartToFormGroup(this.partArray.length, <RecipePart>{}));
+	}
 
-  removePart(index: number): void {
-    this.partArray.removeAt(index);
-  }
+	removePart(index: number): void {
+		this.partArray.removeAt(index);
+	}
 
-  private recipePartToFormGroup(index: number, p: RecipePart): FormGroup {
-    const formGroup = this.fb.group({
-      id: [p.id],
-      version: [p.version],
-      ingredient: [p.ingredient, Validators.compose([Validators.required])],
-      ingredientFilter: new FormControl(),
-      amount: [p.amount, Validators.compose([Validators.required])],
-      unit: [p?.unit ? p?.unit : p?.ingredient?.defaultUnit]
-    });
+	private recipePartToFormGroup(index: number, p: RecipePart): FormGroup {
+		const formGroup = this.fb.group({
+			id: [p.id],
+			version: [p.version],
+			ingredient: [p.ingredient, Validators.compose([Validators.required])],
+			amount: [p.amount, Validators.compose([Validators.required])],
+			unit: [p?.unit ? p?.unit : p?.ingredient?.defaultUnit]
+		});
+		return formGroup;
+	}
 
-    this.filteredIngredients[index] = new ReplaySubject<Ingredient[]>(1);
-    formGroup.get('ingredientFilter').valueChanges.pipe(
-      startWith(''),
-      map(value => typeof value === 'string' ? value : value.name),
-      map(name => name ? this.filterIngredients(name) : this.ingredients?.slice())
-    ).forEach(i => this.filteredIngredients[index].next(i));
-    return formGroup;
-  }
+	onSubmit(recipe: Recipe): void {
+		if (!this.recipeForm.valid) {
+			console.log("form not valid")
+			return;
+		}
+		let callingSub: Observable<Recipe>;
+		if (this.recipe != null) {
+			recipe.id = this.recipe.id;
+			recipe.version = this.recipe.version;
+			callingSub = this.recipeService.putRecipeToId(this.recipe.id, recipe);
+		} else {
+			callingSub = this.recipeService.postNewRecipe(recipe);
+		}
 
-  onSubmit(recipe: Recipe): void {
-    if (!this.recipeForm.valid) {
-      return;
-    }
+		callingSub.subscribe({
+			next: data => {
+				console.log(data);
+				this.updateRecipe();
+				this.router.navigateByUrl(RecipeOverviewComponent.ROUTE).then(() => {
+					window.location.reload();
+				});
+			},
+			error: error => {
+				console.log(error);
+			}
+		});
+	}
 
-    // tslint:disable-next-line:no-string-literal
-    recipe.parts.forEach(part => delete part['ingredientFilter']);
+	private filterIngredients(name: string): Ingredient[] {
+		const filterValue = name.toLowerCase();
+		const filtered = this.ingredients.filter(ing => ing.name.toLowerCase().indexOf(filterValue) >= 0);
+		return filtered;
+	}
 
-    let req: Observable<Recipe>;
-    if (this.recipe != null) {
-      recipe.id = this.recipe.id;
-      recipe.version = this.recipe.version;
+	compareIngredients(i1: Ingredient, i2: Ingredient): boolean {
+		if (i1?.id === i2?.id) {
+			return true;
+		}
+		return false;
+	}
 
-      req = this.recipeService.putRecipeToId(this.recipe.id, recipe);
-    } else {
-      req = this.recipeService.postNewRecipe(recipe);
-    }
+	displayIngredient(ing: Ingredient): String {
+		return ing.name;
+	}
 
-    req.subscribe(() => this.router.navigateByUrl(RecipeOverviewComponent.ROUTE),
-      err => console.error(err.error));
-  }
+	possibleIngredients(): Ingredient[] {
+		return this.ingredients.slice();
+	}
+	
+	compareUnits(u1: Unit, u2: Unit): boolean {
+		return u1 === u2;
+	}
 
-  private filterIngredients(name: string): Ingredient[] {
-    const filterValue = name.toLowerCase();
-    const filtered = this.ingredients.filter(ing => ing.name.toLowerCase().indexOf(filterValue) >= 0);
-    return filtered;
-  }
+	displayUnit(u: Unit): String {
+		return u;
+	}
 
-  compareIngredients(i1: Ingredient, i2: Ingredient): boolean {
-    return i1?.id === i2?.id;
-  }
+	possibleUnits(): Unit[] {
+		return Object.values(Unit);
+	}
 
 }
