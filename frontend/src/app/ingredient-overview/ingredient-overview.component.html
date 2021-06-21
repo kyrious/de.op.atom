@@ -9,6 +9,7 @@
 		<th>Name</th>
 		<th>Category</th>
 		<th>Makro Nutrient</th>
+		<th>in g/100g</th>
 		<th>Default Unit</th>
 		<th>Version</th>
 	</tr>
@@ -19,7 +20,36 @@
 		<td>{{ing.id}}</td>
 		<td>{{ing.name}}</td>
 		<td>{{ing.category}}</td>
-		<td>{{ing.makroNutrients}}</td>
+		<td>
+			Sugar
+			<br>
+			Carbohydrates
+			<br>
+			SaturatedFat
+			<br>
+			UnsaturatedFat
+			<br>
+			Fiber
+			<br>
+			Protein
+			<br>
+			Calories
+		</td>
+		<td>
+			{{ing.makroNutrients.sugar}}
+			<br>
+			{{ing.makroNutrients.carbohydrates}}
+			<br>
+			{{ing.makroNutrients.saturatedFat}}
+			<br>
+			{{ing.makroNutrients.unsaturatedFat}}
+			<br>
+			{{ing.makroNutrients.fiber}}
+			<br>
+			{{ing.makroNutrients.protein}}
+			<br>
+			{{ing.makroNutrients.calories}}
+		</td>
 		<td>{{ing.defaultUnit}}</td>
 		<td>{{ing.version}}</td>
 	</tr>
