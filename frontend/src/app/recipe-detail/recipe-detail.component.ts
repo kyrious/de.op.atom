@@ -1,12 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { Recipe, RecipePart, RecipeService, Ingredient, IngredientService, Unit } from 'gen';
 import { ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, FormArray, Validators, FormControl } from '@angular/forms';
 import { HeaderTitleServiceService } from '../core/header-title-service.service';
-import { Observable, ReplaySubject } from 'rxjs';
-import { catchError, map, startWith , filter} from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { map, filter } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { RecipeOverviewComponent } from './../recipe-overview/recipe-overview.component';
+import { MatAutocomplete, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { COMMA, ENTER } from '@angular/cdk/keycodes';
+import { MatChipInputEvent } from '@angular/material/chips';
 
 @Component({
 	selector: 'app-recipe-detail',
@@ -22,7 +25,11 @@ export class RecipeDetailComponent implements OnInit {
 	recipe?: Recipe;
 	recipeForm: FormGroup;
 	partArray: FormArray;
-	ingredients: Ingredient[];
+	ingredients: Ingredient[] = [];
+	tags: string[] = [];
+
+	@ViewChild('tagInput') recipeTagInput: ElementRef<HTMLInputElement>;
+	separatorKeysCodes: number[] = [ENTER, COMMA];
 
 	constructor(private route: ActivatedRoute,
 		private recipeService: RecipeService,
@@ -33,12 +40,12 @@ export class RecipeDetailComponent implements OnInit {
 		this.headerTiltleService.nextTitle("RecipeDetail");
 	}
 
-
 	ngOnInit(): void {
 		this.partArray = this.fb.array([]);
 		this.recipeForm = this.fb.group({
 			name: [null, Validators.compose([Validators.required])],
 			description: [null, Validators.compose([Validators.required])],
+			tags: [null],
 			parts: this.partArray
 		});
 
@@ -49,6 +56,9 @@ export class RecipeDetailComponent implements OnInit {
 
 		this.ingredientService.getIngredients().subscribe(ings => {
 			this.ingredients = ings;
+		});
+		this.recipeService.getRecipeTags().subscribe(tags => {
+			this.tags = tags;
 		});
 	}
 
@@ -61,6 +71,37 @@ export class RecipeDetailComponent implements OnInit {
 			}
 		});
 	}
+
+	inputNewTag(event: MatChipInputEvent): void {
+		let value = (event.value || '').trim();
+		if (value) {
+			this.addTag(value);
+		}
+	}
+
+	selectedExistingTag(event: MatAutocompleteSelectedEvent): void {
+		this.addTag(event.option.viewValue);
+	}
+
+	private addTag(tag: string): void {
+		this.tags.push(tag);
+		// Reset input element for next user input
+		this.recipeTagInput.nativeElement.value = '';
+	}
+
+	possibleTags(): string[] {
+		return ["awdawdad"].slice();
+	}
+
+	removeTag(tag: string): void {
+		const index = this.tags.indexOf(tag);
+
+		if (index >= 0) {
+			this.tags.splice(index, 1);
+		}
+	}
+
+
 
 	addNewPart(): void {
 		this.partArray.push(this.recipePartToFormGroup(this.partArray.length, <RecipePart>{}));
@@ -76,14 +117,13 @@ export class RecipeDetailComponent implements OnInit {
 			version: [p.version],
 			ingredient: [p.ingredient, Validators.compose([Validators.required])],
 			amount: [p.amount, Validators.compose([Validators.required])],
-			unit: [p?.unit ? p?.unit : p?.ingredient?.defaultUnit]
+			unit: [p?.unit ? p?.unit : p?.ingredient?.defaultUnit, Validators.compose([Validators.required])]
 		});
 		formGroup.get('ingredient').valueChanges.pipe(
 			filter(ing => ing !== null),
 			map(ing => ing.defaultUnit)
 		).subscribe(unit => {
 			let unitControl = this.partArray.at(index).get('unit');
-			console.log(unit)
 			if (!unitControl.value) {
 				unitControl.patchValue(unit);
 			}
@@ -93,8 +133,7 @@ export class RecipeDetailComponent implements OnInit {
 
 	onSubmit(recipe: Recipe): void {
 		if (!this.recipeForm.valid) {
-			console.log("form not valid")
-			return;
+			return;	
 		}
 		let callingSub: Observable<Recipe>;
 		if (this.recipe != null) {
@@ -109,9 +148,9 @@ export class RecipeDetailComponent implements OnInit {
 			next: data => {
 				console.log(data);
 				this.updateRecipe();
-				this.router.navigateByUrl(RecipeOverviewComponent.ROUTE).then(() => {
+				/*this.router.navigateByUrl(RecipeOverviewComponent.ROUTE).then(() => {
 					window.location.reload();
-				});
+				});*/
 			},
 			error: error => {
 				console.log(error);
@@ -131,7 +170,7 @@ export class RecipeDetailComponent implements OnInit {
 	}
 
 	possibleIngredients(): Ingredient[] {
-		return this.ingredients.slice();
+		return this.ingredients;
 	}
 
 	compareUnits(u1: Unit, u2: Unit): boolean {

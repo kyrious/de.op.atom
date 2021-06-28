@@ -1,65 +1,114 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { AbstractControl, FormControl, FormGroup } from '@angular/forms';
+import { AfterViewInit, INJECTOR, OnChanges } from '@angular/core';
+import { Injector } from '@angular/core';
+import { Component, forwardRef, Inject, Input, OnInit, Optional, Self } from '@angular/core';
+import { AbstractControl, ControlValueAccessor, FormControl, FormControlName, FormGroup, FormGroupDirective, NgControl, NgForm, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { ErrorStateMatcher } from '@angular/material/core';
 import { ReplaySubject } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
+
+export class MyErrorStateMatcher implements ErrorStateMatcher {
+	isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
+		const isSubmitted = form && form.submitted;
+		return !!(control && control.invalid && (control.dirty || control.touched || isSubmitted));
+	}
+}
 
 @Component({
 	selector: 'atom-filterable-select',
 	templateUrl: './filterable-select.component.html',
-	styleUrls: ['./filterable-select.component.css']
+	styleUrls: ['./filterable-select.component.css'],
+	providers: [
+		{
+			provide: NG_VALUE_ACCESSOR,
+			useExisting: forwardRef(() => FilterableSelectComponent),
+			multi: true
+		}
+	]
 })
-export class FilterableSelectComponent<Type> implements OnInit {
+export class FilterableSelectComponent<Type> implements OnInit, OnChanges, AfterViewInit, ControlValueAccessor {
 
 	@Input() label: string;
-	@Input() formControlNaming: string;
-	@Input() parentFormGroup: FormGroup;
-	@Input() compare: (filteredTypeObject1: Type, filteredTypeObject2: Type) => boolean;
 	@Input() displayFunction: (filteredObject: Type) => String;
-	@Input() options: Type[];
+	@Input() options: Type[] = [];
+	
+	_options: Type[];
 
 	selectControl: AbstractControl;
 	selectSearchControl: AbstractControl;
 	filter: ReplaySubject<Type[]>;
-	searchTagName: string;
 
-	private originalRawValueOfFormGroup: Function;
+	value: Type;
 
-	constructor() {
-		this.searchTagName = 'FilterableSelectComponent_' + this.formControlNaming + '_' + this.generateRandomSuffix();
+	onChange: Function;
+	control: any;
+
+	matcher: ErrorStateMatcher = new MyErrorStateMatcher();
+
+	constructor(@Inject(INJECTOR) private injector: Injector) {
 		this.filter = new ReplaySubject<Type[]>(1);
 	}
 
 	ngOnInit(): void {
+		this.control = this.injector.get(NgControl);
+		this._options = this.options.slice();
+
+		this.selectControl = new FormControl();
 		this.selectSearchControl = new FormControl();
-		this.parentFormGroup.addControl(this.searchTagName, this.selectSearchControl);
-		this.originalRawValueOfFormGroup = this.parentFormGroup.getRawValue;
-		this.parentFormGroup.getRawValue = () => {
-			let original_returnVal = this.originalRawValueOfFormGroup.bind(this.parentFormGroup)();
-			delete original_returnVal[this.searchTagName];
-			return original_returnVal;
-		};
-		this.filter.next(this.options.slice());
-		
-		this.selectControl = this.parentFormGroup.get(this.formControlNaming);
 
-
-		this.parentFormGroup.get(this.searchTagName).valueChanges.pipe(
+		this.filter.next(this._options);
+		this.selectSearchControl.valueChanges.pipe(
 			startWith(''),
-			map(name => name ? this.doFiltering(name) : this.options?.slice())
+			map(name => name ? this.doFiltering(name) : this._options?.slice())
 		).forEach(i => this.filter.next(i));
-		
-		this.selectControl.updateValueAndValidity();
+
+		this.selectControl.valueChanges.forEach((obj) => {
+			this.value = obj;
+			this.onChange(this.value);
+		});
+
 		this.selectSearchControl.updateValueAndValidity();
 	}
 
-	private doFiltering(name: string): Type[] {
-		const filterValue = name.toLowerCase();
-		const filtered = this.options.filter(option => this.displayFunction(option).toLowerCase().indexOf(filterValue) >= 0);
-		return filtered;
+	ngOnChanges(changes) {
+		console.log("ngOnChanges");
+		console.log(changes)
+		if (changes.options) {
+			this._options = this.options.slice();
+			this.filter.next(this._options);
+			if(this.selectControl){
+				this.selectControl.patchValue(this.value, { emitEvent: false });
+			}
+		}
 	}
 
+	ngAfterViewInit(): void {
+		this.selectControl = this.control.control;
+		this.selectControl.valueChanges.forEach((obj) => {
+			this.value = obj;
+			this.onChange(this.value);
+		});
+	}
 
-	private generateRandomSuffix(): String {
-		return Math.random().toString(36).substring(7);
+	writeValue(obj: any): void {
+		let i = this._options.findIndex(option => {option === obj});
+		if (i === -1) {
+			this._options.push(obj);
+			this.filter.next(this._options);
+		}
+		this.value = obj;
+		this.selectControl.patchValue(this.value, { emitEvent: false });
+	}
+
+	registerOnTouched(fn: any): void {
+	}
+
+	registerOnChange(fn: any): void {
+		this.onChange = fn;
+	}
+	
+	private doFiltering(name: string): Type[] {
+		const filterValue = name.toLowerCase();
+		const filtered = this._options.filter(option => this.displayFunction(option).toLowerCase().indexOf(filterValue) >= 0);
+		return filtered;
 	}
 }
