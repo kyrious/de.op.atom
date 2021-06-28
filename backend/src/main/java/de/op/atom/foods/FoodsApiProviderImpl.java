@@ -71,4 +71,9 @@ public class FoodsApiProviderImpl implements FoodsApiService {
         return this.recipeApiProvider.deleteRecipeWithId(id, securityContext);
     }
 
+    @Override
+    public Response getRecipeTags(SecurityContext securityContext) throws NotFoundException {
+        return this.recipeApiProvider.getRecipeTags(securityContext);
+    }
+
 }

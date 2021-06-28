@@ -83,4 +83,9 @@ public class RecipeService {
         }
         em.remove(r);
     }
+
+    public List<String> getAllRecipeTags() {
+        return em.createNamedQuery(Recipe.SELECT_ALL_TAGS, String.class)
+                 .getResultList();
+    }
 }

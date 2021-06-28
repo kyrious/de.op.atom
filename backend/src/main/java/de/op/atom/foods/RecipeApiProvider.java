@@ -47,6 +47,9 @@ public class RecipeApiProvider {
     @Transactional
     public Response getRecipebyId(Long id, SecurityContext securityContext) throws NotFoundException {
         Recipe recipeWithId = this.recipeService.getRecipeWithId(id);
+        if(recipeWithId != null) {
+            recipeWithId.setTags(List.of("tag1", "tag2"));
+        }
         RecipeDTO dto = this.recipeMapper.createDtoFromEntity(recipeWithId);
         return Response.ok(dto)
                        .build();
@@ -165,5 +168,11 @@ public class RecipeApiProvider {
             }
         }
         return null;
+    }
+
+    public Response getRecipeTags(SecurityContext securityContext) {
+        List<String> tags = this.recipeService.getAllRecipeTags();
+        return Response.ok(tags)
+                       .build();
     }
 }

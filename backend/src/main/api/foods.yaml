@@ -240,6 +240,26 @@ paths:
                   application/json:
                      schema:
                         $ref: core.yaml#/components/schemas/Error
+   /foods/recipes/tags:
+      get:
+         operationId: getRecipeTags
+         tags:
+         - recipe
+         responses:
+            '200':
+               description: Expected response to a valid request
+               content:
+                  application/json:
+                     schema:
+                        type: array
+                        items:
+                           type: string
+            default:
+               description: unexpected error
+               content:
+                  application/json:
+                     schema:
+                        $ref: core.yaml#/components/schemas/Error
 components:
    schemas:
       Unit:
@@ -325,6 +345,10 @@ components:
                type: string
             description:
                type: string
+            tags:
+               type: array
+               items:
+                  type: string
       RecipePart:
          required:
          - amount
