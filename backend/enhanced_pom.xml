@@ -250,7 +250,9 @@
                     <fullJavaUtil>true</fullJavaUtil>
                     <dateLibrary>java8</dateLibrary>
                   </configOptions>
-                  <importMappings />
+                  <importMappings>
+                    <importMapping>ErrorDTO=de.op.atom.gen.core.model.ErrorDTO</importMapping>
+                  </importMappings>
                 </configuration>
               </execution>
             </executions>

@@ -4,7 +4,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 
-import de.op.atom.gen.foods.model.ErrorDTO;
+import de.op.atom.gen.core.model.ErrorDTO;
+
 
 public class ErrorResponseBuilder {
 

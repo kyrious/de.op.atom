@@ -20,18 +20,18 @@ paths:
                type: integer
                format: int64
          responses:
-            '200':
+            "200":
                description: Expected response to a valid request
                content:
                   application/json:
                      schema:
-                        $ref: '#/components/schemas/Ingredient'
+                        $ref: "#/components/schemas/Ingredient"
             default:
                description: unexpected error
                content:
                   application/json:
                      schema:
-                        $ref: core.yaml#/components/schemas/Error
+                        $ref: "core.yaml#/components/schemas/Error"
       delete:
          operationId: deleteIngredientWithId
          tags:
@@ -44,14 +44,14 @@ paths:
                type: integer
                format: int64
          responses:
-            '204':
+            "204":
                description: Expected response to a valid request
             default:
                description: unexpected error
                content:
                   application/json:
                      schema:
-                        $ref: core.yaml#/components/schemas/Error
+                        $ref: "core.yaml#/components/schemas/Error"
       put:
          operationId: putIngredientToId
          tags:
@@ -67,40 +67,40 @@ paths:
             content:
                application/json:
                   schema:
-                     $ref: '#/components/schemas/Ingredient'
+                     $ref: "#/components/schemas/Ingredient"
          responses:
-            '200':
+            "200":
                description: Expected response to a valid request
                content:
                   application/json:
                      schema:
-                        $ref: '#/components/schemas/Ingredient'
+                        $ref: "#/components/schemas/Ingredient"
             default:
                description: unexpected error
                content:
                   application/json:
                      schema:
-                        $ref: core.yaml#/components/schemas/Error
+                        $ref: "core.yaml#/components/schemas/Error"
    /foods/ingredients:
       get:
          operationId: getIngredients
          tags:
          - ingredient
          responses:
-            '200':
+            "200":
                description: Expected response to a valid request
                content:
                   application/json:
                      schema:
                         type: array
                         items:
-                           $ref: '#/components/schemas/Ingredient'
+                           $ref: "#/components/schemas/Ingredient"
             default:
                description: unexpected error
                content:
                   application/json:
                      schema:
-                        $ref: core.yaml#/components/schemas/Error
+                        $ref: "core.yaml#/components/schemas/Error"
       post:
          operationId: postNewIngredients
          tags:
@@ -109,21 +109,20 @@ paths:
             content:
                application/json:
                   schema:
-                     $ref: '#/components/schemas/Ingredient'
+                     $ref: "#/components/schemas/Ingredient"
          responses:
-            '200':
+            "200":
                description: Expected response to a valid request
                content:
                   application/json:
                      schema:
-                        $ref: '#/components/schemas/Ingredient'
+                        $ref: "#/components/schemas/Ingredient"
             default:
                description: unexpected error
                content:
                   application/json:
                      schema:
-                        $ref: core.yaml#/components/schemas/Error
-   
+                        $ref: "core.yaml#/components/schemas/Error"
    /foods/recipes/{id}:
       get:
          operationId: getRecipebyId
@@ -137,18 +136,18 @@ paths:
                type: integer
                format: int64
          responses:
-            '200':
+            "200":
                description: Expected response to a valid request
                content:
                   application/json:
                      schema:
-                        $ref: '#/components/schemas/Recipe'
+                        $ref: "#/components/schemas/Recipe"
             default:
                description: unexpected error
                content:
                   application/json:
                      schema:
-                        $ref: core.yaml#/components/schemas/Error
+                        $ref: "core.yaml#/components/schemas/Error"
       delete:
          operationId: deleteRecipeWithId
          tags:
@@ -161,14 +160,14 @@ paths:
                type: integer
                format: int64
          responses:
-            '204':
+            "204":
                description: Expected response to a valid request
             default:
                description: unexpected error
                content:
                   application/json:
                      schema:
-                        $ref: core.yaml#/components/schemas/Error
+                        $ref: "core.yaml#/components/schemas/Error"
       put:
          operationId: putRecipeToId
          tags:
@@ -184,40 +183,40 @@ paths:
             content:
                application/json:
                   schema:
-                     $ref: '#/components/schemas/Recipe'
+                     $ref: "#/components/schemas/Recipe"
          responses:
-            '200':
+            "200":
                description: Expected response to a valid request
                content:
                   application/json:
                      schema:
-                        $ref: '#/components/schemas/Recipe'
+                        $ref: "#/components/schemas/Recipe"
             default:
                description: unexpected error
                content:
                   application/json:
                      schema:
-                        $ref: core.yaml#/components/schemas/Error
+                        $ref: "core.yaml#/components/schemas/Error"
    /foods/recipes:
       get:
          operationId: getRecipes
          tags:
          - recipe
          responses:
-            '200':
+            "200":
                description: Expected response to a valid request
                content:
                   application/json:
                      schema:
                         type: array
                         items:
-                           $ref: '#/components/schemas/Recipe'
+                           $ref: "#/components/schemas/Recipe"
             default:
                description: unexpected error
                content:
                   application/json:
                      schema:
-                        $ref: core.yaml#/components/schemas/Error
+                        $ref: "core.yaml#/components/schemas/Error"
       post:
          operationId: postNewRecipe
          tags:
@@ -226,27 +225,27 @@ paths:
             content:
                application/json:
                   schema:
-                     $ref: '#/components/schemas/Recipe'
+                     $ref: "#/components/schemas/Recipe"
          responses:
-            '200':
+            "200":
                description: Expected response to a valid request
                content:
                   application/json:
                      schema:
-                        $ref: '#/components/schemas/Recipe'
+                        $ref: "#/components/schemas/Recipe"
             default:
                description: unexpected error
                content:
                   application/json:
                      schema:
-                        $ref: core.yaml#/components/schemas/Error
+                        $ref: "core.yaml#/components/schemas/Error"
    /foods/recipes/tags:
       get:
          operationId: getRecipeTags
          tags:
          - recipe
          responses:
-            '200':
+            "200":
                description: Expected response to a valid request
                content:
                   application/json:
@@ -259,7 +258,7 @@ paths:
                content:
                   application/json:
                      schema:
-                        $ref: core.yaml#/components/schemas/Error
+                        $ref: "core.yaml#/components/schemas/Error"
 components:
    schemas:
       Unit:
@@ -293,9 +292,9 @@ components:
                - MEAT
                - CONFECTION
             defaultUnit:
-               $ref: '#/components/schemas/Unit'
+               $ref: "#/components/schemas/Unit"
             makroNutrients:
-               $ref: '#/components/schemas/MakroNutrients'
+               $ref: "#/components/schemas/MakroNutrients"
       MakroNutrients:
          required:
          - sugar
@@ -340,7 +339,7 @@ components:
             parts:
                type: array
                items:
-                  $ref: '#/components/schemas/RecipePart'
+                  $ref: "#/components/schemas/RecipePart"
             name:
                type: string
             description:
@@ -363,8 +362,8 @@ components:
                type: integer
                format: int64
             ingredient:
-               $ref: '#/components/schemas/Ingredient'
+               $ref: "#/components/schemas/Ingredient"
             amount:
                type: integer
             unit:
-               $ref: '#/components/schemas/Unit'
+               $ref: "#/components/schemas/Unit"
