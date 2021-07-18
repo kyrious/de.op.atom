@@ -13,14 +13,20 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
+import de.op.atom.core.DefaultAtomProfile;
+import de.op.atom.gen.api.FoodsApi;
 import de.op.atom.gen.foods.model.IngredientDTO;
 import de.op.atom.gen.foods.model.IngredientDTO.CategoryEnum;
 import de.op.atom.gen.foods.model.MakroNutrientsDTO;
+import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
+import io.quarkus.test.junit.TestProfile;
 import io.restassured.filter.log.ResponseLoggingFilter;
 
 @QuarkusTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@TestHTTPEndpoint(FoodsApi.class)
+@TestProfile(DefaultAtomProfile.class)
 public class IngredientApiProviderTest {
 
     private IngredientDTO ingredientDto;
@@ -51,7 +57,7 @@ public class IngredientApiProviderTest {
                                               .body(ingredientDto)
                                               .contentType("application/json")
                                               .when()
-                                              .post("/atom/v1/foods/ingredients")
+                                              .post("/ingredients")
                                               .then()
                                               .statusCode(Status.OK.getStatusCode())
                                               .extract()
@@ -70,7 +76,7 @@ public class IngredientApiProviderTest {
     public void getNewlyPostedIngredient() {
         IngredientDTO[] readIngredients = given().filter(ResponseLoggingFilter.logResponseIfStatusCodeMatches(not(Status.OK.getStatusCode())))
                                                  .when()
-                                                 .get("/atom/v1/foods/ingredients/")
+                                                 .get("/ingredients")
                                                  .then()
                                                  .statusCode(Status.OK.getStatusCode())
                                                  .extract()
@@ -88,7 +94,7 @@ public class IngredientApiProviderTest {
     public void updateIngredientMetadata() {
         IngredientDTO[] readIngredients = given().filter(ResponseLoggingFilter.logResponseIfStatusCodeMatches(not(Status.OK.getStatusCode())))
                                                  .when()
-                                                 .get("/atom/v1/foods/ingredients/")
+                                                 .get("/ingredients")
                                                  .then()
                                                  .statusCode(Status.OK.getStatusCode())
                                                  .extract()
@@ -104,7 +110,7 @@ public class IngredientApiProviderTest {
                                                  .body(readIngredient)
                                                  .contentType("application/json")
                                                  .when()
-                                                 .put("/atom/v1/foods/ingredients/{id}", readIngredient.getId())
+                                                 .put("/ingredients/{id}", readIngredient.getId())
                                                  .then()
                                                  .statusCode(Status.OK.getStatusCode())
                                                  .extract()
@@ -120,7 +126,7 @@ public class IngredientApiProviderTest {
     public void updateIngredientMakroNutrients() {
         IngredientDTO[] readIngredients = given().filter(ResponseLoggingFilter.logResponseIfStatusCodeMatches(not(Status.OK.getStatusCode())))
                                                  .when()
-                                                 .get("/atom/v1/foods/ingredients/")
+                                                 .get("/ingredients")
                                                  .then()
                                                  .statusCode(Status.OK.getStatusCode())
                                                  .extract()
@@ -137,7 +143,7 @@ public class IngredientApiProviderTest {
                                                  .body(readIngredient)
                                                  .contentType("application/json")
                                                  .when()
-                                                 .put("/atom/v1/foods/ingredients/{id}", readIngredient.getId())
+                                                 .put("/ingredients/{id}", readIngredient.getId())
                                                  .then()
                                                  .statusCode(Status.OK.getStatusCode())
                                                  .extract()
@@ -156,7 +162,7 @@ public class IngredientApiProviderTest {
     public void updateIngredientWithWrongVersion() {
         IngredientDTO[] readIngredients = given().filter(ResponseLoggingFilter.logResponseIfStatusCodeMatches(not(Status.OK.getStatusCode())))
                                                  .when()
-                                                 .get("/atom/v1/foods/ingredients/")
+                                                 .get("/ingredients")
                                                  .then()
                                                  .statusCode(Status.OK.getStatusCode())
                                                  .extract()
@@ -174,7 +180,7 @@ public class IngredientApiProviderTest {
                .body(readIngredient)
                .contentType("application/json")
                .when()
-               .put("/atom/v1/foods/ingredients/{id}", readIngredient.getId())
+               .put("/ingredients/{id}", readIngredient.getId())
                .then()
                .statusCode(Status.OK.getStatusCode())
                .extract()
@@ -186,7 +192,7 @@ public class IngredientApiProviderTest {
                .body(readIngredient)
                .contentType("application/json")
                .when()
-               .put("/atom/v1/foods/ingredients/{id}", readIngredient.getId())
+               .put("/ingredients/{id}", readIngredient.getId())
                .then()
                .statusCode(Status.CONFLICT.getStatusCode());
 
@@ -196,7 +202,7 @@ public class IngredientApiProviderTest {
     @Order(6)
     public void deleteIngredient() {
         IngredientDTO[] ingredients = given().when()
-                                             .get("/atom/v1/foods/ingredients/")
+                                             .get("/ingredients")
                                              .then()
                                              .statusCode(Status.OK.getStatusCode())
                                              .extract()
@@ -205,7 +211,7 @@ public class IngredientApiProviderTest {
 
         given().filter(ResponseLoggingFilter.logResponseIfStatusCodeMatches(not(Status.OK.getStatusCode())))
                .when()
-               .delete("/atom/v1/foods/ingredients/{id}", ingredients[0].getId())
+               .delete("/ingredients/{id}", ingredients[0].getId())
                .then()
                .statusCode(Status.OK.getStatusCode());
 
@@ -216,7 +222,7 @@ public class IngredientApiProviderTest {
 
     private int getNumberOfIngredientsOnServer() {
         return given().when()
-                      .get("/atom/v1/foods/ingredients/")
+                      .get("/ingredients")
                       .then()
                       .statusCode(Status.OK.getStatusCode())
                       .extract()

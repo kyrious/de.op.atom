@@ -17,17 +17,24 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
 import de.op.atom.core.AbstractAtomTest;
+import de.op.atom.core.DefaultAtomProfile;
+import de.op.atom.gen.api.FoodsApi;
 import de.op.atom.gen.foods.model.IngredientDTO;
 import de.op.atom.gen.foods.model.IngredientDTO.CategoryEnum;
 import de.op.atom.gen.foods.model.RecipeDTO;
 import de.op.atom.gen.foods.model.RecipePartDTO;
 import de.op.atom.gen.foods.model.UnitDTO;
+import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
+import io.quarkus.test.junit.TestProfile;
+import io.restassured.RestAssured;
 import io.restassured.filter.log.RequestLoggingFilter;
 import io.restassured.filter.log.ResponseLoggingFilter;
 
 @QuarkusTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@TestHTTPEndpoint(FoodsApi.class)
+@TestProfile(DefaultAtomProfile.class)
 public class RecipeApiProviderTest extends AbstractAtomTest {
 
     private static IngredientDTO ingredientCereal;
@@ -36,6 +43,9 @@ public class RecipeApiProviderTest extends AbstractAtomTest {
 
     @BeforeEach
     void initDtos() {
+        RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
+
+
         if (ingredientCereal == null) {
             ingredientCereal = new IngredientDTO();
             ingredientCereal.setCategory(CategoryEnum.CEREAL);
@@ -45,7 +55,7 @@ public class RecipeApiProviderTest extends AbstractAtomTest {
                                       .body(ingredientCereal)
                                       .contentType("application/json")
                                       .when()
-                                      .post("/atom/v1/foods/ingredients")
+                                      .post("/ingredients")
                                       .then()
                                       .statusCode(Status.OK.getStatusCode())
                                       .extract()
@@ -61,7 +71,7 @@ public class RecipeApiProviderTest extends AbstractAtomTest {
                                      .body(ingredientFruit)
                                      .contentType("application/json")
                                      .when()
-                                     .post("/atom/v1/foods/ingredients")
+                                     .post("/ingredients")
                                      .then()
                                      .statusCode(Status.OK.getStatusCode())
                                      .extract()
@@ -92,7 +102,7 @@ public class RecipeApiProviderTest extends AbstractAtomTest {
                                       .body(recipeDto)
                                       .contentType("application/json")
                                       .when()
-                                      .post("/atom/v1/foods/recipes")
+                                      .post("/recipes")
                                       .then()
                                       .statusCode(Status.OK.getStatusCode())
                                       .extract()
@@ -121,7 +131,7 @@ public class RecipeApiProviderTest extends AbstractAtomTest {
                .body(recipeDto)
                .contentType("application/json")
                .when()
-               .post("/atom/v1/foods/recipes")
+               .post("/recipes")
                .then()
                .statusCode(Status.BAD_REQUEST.getStatusCode());
 
@@ -146,7 +156,7 @@ public class RecipeApiProviderTest extends AbstractAtomTest {
                                       .body(recipeDto)
                                       .contentType("application/json")
                                       .when()
-                                      .post("/atom/v1/foods/recipes")
+                                      .post("/recipes")
                                       .then()
                                       .statusCode(Status.OK.getStatusCode())
                                       .extract()
@@ -165,7 +175,7 @@ public class RecipeApiProviderTest extends AbstractAtomTest {
     public void getNewlyPostedRecipe() {
         RecipeDTO[] readRecipes = given().filter(ResponseLoggingFilter.logResponseIfStatusCodeMatches(not(Status.OK.getStatusCode())))
                                          .when()
-                                         .get("/atom/v1/foods/recipes/")
+                                         .get("/recipes/")
                                          .then()
                                          .statusCode(Status.OK.getStatusCode())
                                          .extract()
@@ -183,7 +193,7 @@ public class RecipeApiProviderTest extends AbstractAtomTest {
     public void updateRecipeMetadata() {
         RecipeDTO[] readRecipes = given().filter(ResponseLoggingFilter.logResponseIfStatusCodeMatches(not(Status.OK.getStatusCode())))
                                          .when()
-                                         .get("/atom/v1/foods/recipes/")
+                                         .get("/recipes/")
                                          .then()
                                          .statusCode(Status.OK.getStatusCode())
                                          .extract()
@@ -200,7 +210,7 @@ public class RecipeApiProviderTest extends AbstractAtomTest {
                                          .body(readRecipe)
                                          .contentType("application/json")
                                          .when()
-                                         .put("/atom/v1/foods/recipes/{id}", readRecipe.getId())
+                                         .put("/recipes/{id}", readRecipe.getId())
                                          .then()
                                          .statusCode(Status.OK.getStatusCode())
                                          .extract()
@@ -216,7 +226,7 @@ public class RecipeApiProviderTest extends AbstractAtomTest {
     public void updateRecipeParts() {
         RecipeDTO[] readRecipes = given().filter(ResponseLoggingFilter.logResponseIfStatusCodeMatches(not(Status.OK.getStatusCode())))
                                          .when()
-                                         .get("/atom/v1/foods/recipes/")
+                                         .get("/recipes/")
                                          .then()
                                          .statusCode(Status.OK.getStatusCode())
                                          .extract()
@@ -238,7 +248,7 @@ public class RecipeApiProviderTest extends AbstractAtomTest {
                                          .body(readRecipe)
                                          .contentType("application/json")
                                          .when()
-                                         .put("/atom/v1/foods/recipes/{id}", readRecipe.getId())
+                                         .put("/recipes/{id}", readRecipe.getId())
                                          .then()
                                          .statusCode(Status.OK.getStatusCode())
                                          .extract()
@@ -253,7 +263,7 @@ public class RecipeApiProviderTest extends AbstractAtomTest {
     @Order(7)
     public void deleteRecipe() {
         RecipeDTO[] recipes = given().when()
-                                     .get("/atom/v1/foods/recipes/")
+                                     .get("/recipes/")
                                      .then()
                                      .statusCode(Status.OK.getStatusCode())
                                      .extract()
@@ -262,7 +272,7 @@ public class RecipeApiProviderTest extends AbstractAtomTest {
 
         given().filter(ResponseLoggingFilter.logResponseIfStatusCodeMatches(not(Status.OK.getStatusCode())))
                .when()
-               .delete("/atom/v1/foods/recipes/{id}", recipes[0].getId())
+               .delete("/recipes/{id}", recipes[0].getId())
                .then()
                .statusCode(Status.OK.getStatusCode());
 
@@ -273,7 +283,7 @@ public class RecipeApiProviderTest extends AbstractAtomTest {
 
     private int getNumberOfRecipesOnServer() {
         return given().when()
-                      .get("/atom/v1/foods/recipes/")
+                      .get("/recipes/")
                       .then()
                       .statusCode(Status.OK.getStatusCode())
                       .extract()
