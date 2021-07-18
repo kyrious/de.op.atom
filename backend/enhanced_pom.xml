@@ -255,6 +255,34 @@
                   </importMappings>
                 </configuration>
               </execution>
+              <execution>
+                <id>scheduling</id>
+                <goals>
+                  <goal>generate</goal>
+                </goals>
+                <configuration>
+                  <inputSpec>${project.basedir}/src/main/api/scheduling.yaml</inputSpec>
+                  <generatorName>jaxrs-resteasy</generatorName>
+                  <ignoreFileOverride>${project.basedir}/.openapi-generator-ignore</ignoreFileOverride>
+                  <apiPackage>de.op.atom.gen.api</apiPackage>
+                  <modelPackage>de.op.atom.gen.scheduling.model</modelPackage>
+                  <invokerPackage>de.op.atom.gen.inv</invokerPackage>
+                  <output>.</output>
+                  <modelNameSuffix>DTO</modelNameSuffix>
+                  <configOptions>
+                    <java8>true</java8>
+                    <sourceFolder>src/main/gen</sourceFolder>
+                    <library>microprofile</library>
+                    <apiTests>false</apiTests>
+                    <modelTests>false</modelTests>
+                    <fullJavaUtil>true</fullJavaUtil>
+                    <dateLibrary>java8</dateLibrary>
+                  </configOptions>
+                  <importMappings>
+                    <importMapping>RecipeDTO=de.op.atom.gen.foods.model.RecipeDTO</importMapping>
+                  </importMappings>
+                </configuration>
+              </execution>
             </executions>
           </plugin>
           <plugin>

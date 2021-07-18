@@ -1,0 +1,42 @@
+openapi: 3.0.0
+info:
+   title: Atom
+   license:
+      name: MIT
+   version: 0.0.1
+servers:
+-  url: http://localhost:8080/atom/v1
+paths:
+   /schedule/meal:
+      get:
+         operationId: getScheduledMeal
+         tags:
+         - meal
+         responses:
+          '200':
+            description: Expected response to a valid request
+            content:
+              text/plain:
+                schema:
+                  $ref: "#/components/schemas/ScheduledMeal"
+components:
+   schemas:
+      ScheduledMeal:
+         required:
+         - code
+         - message
+         type: object
+         properties:
+            slot:
+               $ref: "#/components/schemas/TimeSlot"
+            date:
+               type: date
+            recipe:
+               $ref: "foods.yaml#/components/schemas/Recipe"
+      TimeSlot:
+         type: string
+         enum:
+         - MORNING
+         - AFTERNOON
+         - EVENING 
+         - NIGHT
