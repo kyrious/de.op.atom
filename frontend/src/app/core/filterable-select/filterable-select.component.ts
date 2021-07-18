@@ -42,8 +42,6 @@ export class FilterableSelectComponent<Type> implements OnInit, OnChanges, After
 	onChange: Function;
 	control: any;
 
-	matcher: ErrorStateMatcher = new MyErrorStateMatcher();
-
 	constructor(@Inject(INJECTOR) private injector: Injector) {
 		this.filter = new ReplaySubject<Type[]>(1);
 	}
@@ -90,13 +88,17 @@ export class FilterableSelectComponent<Type> implements OnInit, OnChanges, After
 	}
 
 	writeValue(obj: any): void {
+		if(!obj){
+			return;
+		}
+		
 		let i = this._options.findIndex(option => {option === obj});
 		if (i === -1) {
 			this._options.push(obj);
 			this.filter.next(this._options);
 		}
-		this.value = obj;
-		this.selectControl.patchValue(this.value, { emitEvent: false });
+		this.value = obj;/*
+		this.selectControl.patchValue(this.value, { emitEvent: false });*/
 	}
 
 	registerOnTouched(fn: any): void {
