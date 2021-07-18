@@ -7,7 +7,7 @@
   <version>0.1.0-SNAPSHOT</version>
   <properties>
     <maven.compiler.release>14</maven.compiler.release>
-    <quarkus.platform.version>1.10.5.Final</quarkus.platform.version>
+    <quarkus.platform.version>2.0.2.Final</quarkus.platform.version>
     <frontend.base.path>${basedir}/../frontend</frontend.base.path>
     <frontend-maven-plugin.version>1.11.0</frontend-maven-plugin.version>
     <quarkus.platform.artifact-id>quarkus-universe-bom</quarkus.platform.artifact-id>
@@ -17,7 +17,7 @@
     <frontend.base.href>/atom/</frontend.base.href>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.parameters>true</maven.compiler.parameters>
-    <quarkus-plugin.version>1.10.5.Final</quarkus-plugin.version>
+    <quarkus-plugin.version>2.0.2.Final</quarkus-plugin.version>
     <maven-resources-plugin.version>3.2.0</maven-resources-plugin.version>
     <quarkus.platform.group-id>io.quarkus</quarkus.platform.group-id>
   </properties>
