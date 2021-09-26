@@ -5,6 +5,8 @@ import javax.inject.Inject;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
+import de.op.atom.foods.provider.IngredientApiProvider;
+import de.op.atom.foods.provider.RecipeApiProvider;
 import de.op.atom.gen.api.FoodsApiService;
 import de.op.atom.gen.api.NotFoundException;
 import de.op.atom.gen.foods.model.IngredientDTO;

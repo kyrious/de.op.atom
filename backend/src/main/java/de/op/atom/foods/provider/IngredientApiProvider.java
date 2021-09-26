@@ -1,4 +1,4 @@
-package de.op.atom.foods;
+package de.op.atom.foods.provider;
 
 import java.util.List;
 import java.util.NoSuchElementException;
