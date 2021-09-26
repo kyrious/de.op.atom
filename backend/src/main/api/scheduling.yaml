@@ -1,4 +1,4 @@
-openapi: 3.0.0
+openapi: 3.0.3
 info:
    title: Atom
    license:
@@ -7,18 +7,77 @@ info:
 servers:
 -  url: http://localhost:8080/atom/v1
 paths:
-   /schedule/meal:
+   /schedule/meals:
       get:
-         operationId: getScheduledMeal
+         operationId: getScheduledMeals
          tags:
          - meal
+         parameters:
+         -  name: from
+            in: query
+            required: true
+            schema:
+               type: string
+               format: date-time
+         -  name: to
+            in: query
+            required: true
+            schema:
+               type: string
+               format: date-time
          responses:
-          '200':
-            description: Expected response to a valid request
+            '200':
+               description: Expected response to a valid request
+               content:
+                 text/plain:
+                   schema:
+                      type: array
+                      items:
+                        $ref: "#/components/schemas/ScheduledMeal"
+   /schedule/meal/{date}/{slot}:
+      delete:
+         operationId: deleteScheduledMeal
+         tags:
+         - meal
+         parameters:
+         -  name: date
+            in: path
+            required: true
+            schema:
+               type: string
+               format: date
+         -  name: slot
+            in: path
+            required: true
+            schema:
+               $ref "#/components/schemas/TimeSlot"
+         responses:
+            '200':
+               description: Success
+      put:
+         operationId: putScheduledMeal
+         tags:
+         - meal
+         parameters:
+         -  name: date
+            in: path
+            required: true
+            schema:
+               type: string
+               format: date
+         -  name: slot
+            in: path
+            required: true
+            schema:
+               $ref "#/components/schemas/TimeSlot"
+         requestBody:
             content:
-              text/plain:
-                schema:
-                  $ref: "#/components/schemas/ScheduledMeal"
+               application/json:
+                  schema:
+                     $ref: "#/components/schemas/ScheduledMeal"
+         responses:
+            '200':
+               description: Success
 components:
    schemas:
       ScheduledMeal:
@@ -27,7 +86,8 @@ components:
             slot:
                $ref: "#/components/schemas/TimeSlot"
             date:
-               type: date
+               type: string
+               format: date
             recipe:
                $ref: "foods.yaml#/components/schemas/Recipe"
       TimeSlot:
