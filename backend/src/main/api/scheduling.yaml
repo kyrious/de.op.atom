@@ -22,9 +22,6 @@ paths:
 components:
    schemas:
       ScheduledMeal:
-         required:
-         - code
-         - message
          type: object
          properties:
             slot:
